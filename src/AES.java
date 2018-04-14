@@ -22,4 +22,10 @@ public class AES {
             exit(1);
         }
 	}
+	
+	public static void main(String[] args) throws IOException {
+        out.print("start");
+       
+    }
+    
 }
