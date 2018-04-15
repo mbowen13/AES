@@ -150,11 +150,38 @@ public class AES {
 		out.println(buildString(state));
 	}
 	
-	private static void keyExpansionCore(char[] word, char rConIndex) {
-		// where does the input word come from?
+	private static void keyExpansionCore(char[] arr, int rConIndex) {
+		// arr is tmp from keyExpansion()
+		
 	}
 	
-	private static void keyExpansion() {}
+	// expand 16 byte key to 176 byte key
+	private static void keyExpansion(char[] inputKey, char[] expandedKey) {
+		for(int i = 0; i < 16; i++) {
+			expandedKey[i] = inputKey[i];
+		}
+		
+		int bytesGenerated = 16;
+		int rconIteration = 1;
+		char tmp[] = new char[4];
+
+		// 176 is 10 rounds + original key since each is 16 bytes each
+		while(bytesGenerated < 176) {
+			for(int i = 0; i < 4; i++) {
+				tmp[i] = expandedKey[i + bytesGenerated - 4];
+			}
+			
+			// Call the core once for each 16 byte key
+			// modifies tmp 
+			if(bytesGenerated % 16 == 0) 
+				keyExpansionCore(tmp, rconIteration++);
+			
+			for(int i = 0; i < 4; i++) {
+				expandedKey[bytesGenerated] = (char) (expandedKey[bytesGenerated - 16] ^ tmp[i]);
+				bytesGenerated++;
+			}
+		}
+	}
 	
 	private static void encrypt(String input, char[] key) {
 		char[][] state = new char[4][4];
