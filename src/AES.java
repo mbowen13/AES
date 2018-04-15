@@ -138,28 +138,34 @@ public class AES {
 		out.println(buildString(state));
 	}
 	
-	private static void addRoundKey(char[][] state, char[][] roundKey) {
+	private static void addRoundKey(char[][] state, char[] roundKey) {
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[i][j] ^= roundKey[i][j];  // ?
+				state[i][j] ^= roundKey[4 * i + j];  // ?
 			}
 		}
+		
+		// print state after mixColumns()
+		out.println("After addRoundKey():");
+		out.println(buildString(state));
+	}
+	
+	private static void keyExpansionCore(char[] word, char rConIndex) {
+		// where does the input word come from?
 	}
 	
 	private static void keyExpansion() {}
 	
-	private static void encrypt(String input, char[][] key) {
+	private static void encrypt(String input, char[] key) {
 		char[][] state = new char[4][4];
 		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[i][j] = key[i][j];
+				state[i][j] = key[4 * i +j];
 			}
 		}
 		
-		// addRoundKey(0);
-		// print state
-		out.println(buildString(state));
+		addRoundKey(state, key);
 		
 		int numberOfRounds = 1;
 		
@@ -167,12 +173,12 @@ public class AES {
 			subBytes(state);
 			shiftRows(state);
 			mixColumns(state);
-//			addRoundKey(state, key);
+			addRoundKey(state, key);
 		}
 		
-//		subBytes(state);
-//		shiftRows(state);
-		// addRoundKey(numberOfRounds);
+		subBytes(state);
+		shiftRows(state);
+		addRoundKey(state, key);
 	}
 	
 	private static String buildString(char[][] input) {
@@ -193,8 +199,8 @@ public class AES {
         AES test = new AES();
         
         // for testing
-        char[][] key = new char[4][4]; // all 0's
-        String input = "This is test."; // 16 bytes
+        char[] key = new char[16]; // all 0's hardcoded for now
+        String input = "0000000000"; // 16 bytes
         
         test.encrypt(input, key);
        
