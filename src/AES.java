@@ -96,6 +96,10 @@ public class AES {
 				state[i][j] = sbox[state[i][j]]; // ?
 			}
 		}
+		
+		// print state after subByte()
+		out.println("After subByte():");
+		out.println(buildString(state));
 	}
 	private static void shiftRows(char[][] state) {
 		char[][] tmp = new char[4][4];
@@ -112,6 +116,10 @@ public class AES {
 				state[i][j] = tmp[i][j]; 
 			}
 		}
+		
+		// print state after shiftRows()
+		out.println("After shiftRows():");
+		out.println(buildString(state));
 	}
 	
 	private static void mixColumns(char[][] state) {
@@ -124,6 +132,10 @@ public class AES {
 			state[2][j] = (char) ((char) vector[0] ^ vector[1] ^ mul2[vector[2]] ^ mul3[vector[3]]);
 			state[3][j] = (char) ((char) mul3[vector[0]] ^ vector[1] ^ vector[2] ^ mul2[vector[3]]);
 		}
+		
+		// print state after mixColumns()
+		out.println("After mixColumns():");
+		out.println(buildString(state));
 	}
 	
 	private static void addRoundKey(char[][] state, char[][] roundKey) {
@@ -145,20 +157,22 @@ public class AES {
 			}
 		}
 		
+		// addRoundKey(0);
 		// print state
 		out.println(buildString(state));
-		// print state after subByte()
-		subBytes(state);
-		out.println(buildString(state));
-		// print state after shiftRows()
-		shiftRows(state);
-		out.println(buildString(state));
-		// print state after mixColumns()
-		mixColumns(state);
-		out.println(buildString(state));
-//		// print state after addRoundKey()
-//		addRoundKey(state, key);
-//		out.println(buildString(state));
+		
+		int numberOfRounds = 1;
+		
+		for(int i = 0; i < numberOfRounds; i++) {
+			subBytes(state);
+			shiftRows(state);
+			mixColumns(state);
+//			addRoundKey(state, key);
+		}
+		
+//		subBytes(state);
+//		shiftRows(state);
+		// addRoundKey(numberOfRounds);
 	}
 	
 	private static String buildString(char[][] input) {
