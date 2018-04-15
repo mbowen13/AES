@@ -163,10 +163,6 @@ public class AES {
 				state[i][j] ^= roundKey[4 * i + j];  // ?
 			}
 		}
-		
-		// debug
-		out.println("After addRoundKey():");
-		out.println(buildString(state));
 	}
 	
 	private static void keyExpansionCore(char[] arr, int rConIndex) {
@@ -235,6 +231,10 @@ public class AES {
 		keyExpansion(key, expandedKey);
 		addRoundKey(state, key);
 		
+		// debug
+		out.println("After addRoundKey("+0+"):");
+		out.println(buildString(state));
+		
 		int numberOfRounds = 9;
 		
 		for(int i = 0; i < numberOfRounds; i++) {
@@ -243,12 +243,18 @@ public class AES {
 			mixColumns(state);
 			// correct param for expandedKey?
 			addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (i+1), 16 * (i+1) + 16));
+			// debug
+			out.println("After addRoundKey("+(i+1)+"):");
+			out.println(buildString(state));
 		}
 		
 		//final round 
 		subBytes(state);
 		shiftRows(state);
-		addRoundKey(state,  Arrays.copyOfRange(expandedKey, 160, 176));
+		addRoundKey(state, Arrays.copyOfRange(expandedKey, 160, 176));
+		// debug
+		out.println("After addRoundKey("+10+"):");
+		out.println(buildString(state));
 	}
 	
 	private static String buildString(char[][] input) {
