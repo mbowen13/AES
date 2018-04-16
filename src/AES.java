@@ -117,28 +117,23 @@ public class AES {
 		}
 		
 		// debug
-		out.println("After subByte():");
-		out.println(buildString(state));
+		out.println("After subBytes:");
+		out.println(buildString(state).toUpperCase());
 	}
 	private static void shiftRows(char[][] state) {
-		char[][] tmp = new char[4][4];
+		char tmp;
 		
 		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				// floorMod for negative values, cuz java
-				tmp[i][j] = state[i][Math.floorMod((j - i), 4)]; // check 
-			}
-		}
-		
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				state[i][j] = tmp[i][j]; 
+			for(int j = 0; j < i; j++) {
+				tmp = state[i][0];
+				System.arraycopy(state[i], 1, state[i], 0, 3);
+				state[i][3] = tmp;
 			}
 		}
 		
 		// debug
-		out.println("After shiftRows():");
-		out.println(buildString(state));
+		out.println("After shiftRows:");
+		out.println(buildString(state).toUpperCase());
 	}
 	
 	private static void mixColumns(char[][] state) {
@@ -153,8 +148,8 @@ public class AES {
 		}
 		
 		// debug
-		out.println("After mixColumns():");
-		out.println(buildString(state));
+		out.println("After mixColumns:");
+		out.println(buildString(state).toUpperCase());
 	}
 	
 	private static void addRoundKey(char[][] state, char[] roundKey) {
@@ -222,7 +217,7 @@ public class AES {
 		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[i][j] = key[4 * i +j];
+				state[j][i] = key[4 * i + j];
 			}
 		}
 		
@@ -233,7 +228,7 @@ public class AES {
 		
 		// debug
 		out.println("After addRoundKey("+0+"):");
-		out.println(buildString(state));
+		out.println(buildString(state).toUpperCase());
 		
 		int numberOfRounds = 9;
 		
@@ -252,6 +247,7 @@ public class AES {
 		subBytes(state);
 		shiftRows(state);
 		addRoundKey(state, Arrays.copyOfRange(expandedKey, 160, 176));
+		
 		// debug
 		out.println("After addRoundKey("+10+"):");
 		out.println(buildString(state));
