@@ -110,26 +110,69 @@ public class AES {
 	
 	// state is 4x4 array
 	private static void subBytes(char[][] state) {
+//		out.println("before subytes");
+//		for(int i = 0; i < 4; i++) {
+//			out.println(state[i][0] + " " + state[i][1] + " " + state[i][2] + " " + state[i][3]);
+//		}
+		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++ ) {
 				state[i][j] = sbox[state[i][j]]; // ?
 			}
 		}
 		
+//		out.println("after subytes");
+//		for(int i = 0; i < 4; i++) {
+//			out.println(state[i][0] + " " + state[i][1] + " " + state[i][2] + " " + state[i][3]);
+//		}
+		
 		// debug
 		out.println("After subBytes:");
 		out.println(buildString(state).toUpperCase());
 	}
 	private static void shiftRows(char[][] state) {
-		char tmp;
+		char[][] tmp = new char[4][4];
 		
+//		out.println("before shiftrows");
+//		for(int i = 0; i < 4; i++) {
+//			out.println(state[i][0] + " " + state[i][1] + " " + state[i][2] + " " + state[i][3]);
+//		}
+		
+		// R0
+		tmp[0][0] = state[0][0];
+		tmp[0][1] = state[0][1];
+		tmp[0][2] = state[0][2];
+		tmp[0][3] = state[0][3];
+		
+		// R1
+		tmp[1][0] = state[1][1];
+		tmp[1][1] = state[1][2];
+		tmp[1][2] = state[1][3];
+		tmp[1][3] = state[1][0];
+		
+		// R2
+		tmp[2][0] = state[2][2];
+		tmp[2][1] = state[2][3];
+		tmp[2][2] = state[2][0];
+		tmp[2][3] = state[2][1];
+				
+		// R3
+		tmp[3][0] = state[3][3];
+		tmp[3][1] = state[3][0];
+		tmp[3][2] = state[3][1];
+		tmp[3][3] = state[3][2];
+		
+		// copy back
 		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < i; j++) {
-				tmp = state[i][0];
-				System.arraycopy(state[i], 1, state[i], 0, 3);
-				state[i][3] = tmp;
+			for(int j = 0; j < 4; j++) {
+				state[i][j] = tmp[i][j];
 			}
 		}
+		
+//		out.println("after shift rows");
+//		for(int i = 0; i < 4; i++) {
+//			out.println(state[i][0] + " " + state[i][1] + " " + state[i][2] + " " + state[i][3]);
+//		}
 		
 		// debug
 		out.println("After shiftRows:");
@@ -155,7 +198,7 @@ public class AES {
 	private static void addRoundKey(char[][] state, char[] roundKey) {
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[i][j] ^= roundKey[4 * i + j];  // ?
+				state[j][i] ^= roundKey[4 * i + j];  // ?
 			}
 		}
 	}
@@ -256,9 +299,9 @@ public class AES {
 	private static String buildString(char[][] input) {
 		StringBuilder res = new StringBuilder();
 		
-		for(int i = 0; i < input.length; i++) {
-			for(int j = 0; j < input[i].length; j++) {
-				res.append(Integer.toHexString((int)input[i][j]));
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 4; j++) {
+				res.append(Integer.toHexString((int)input[j][i]));
 			}
 		}
 		
@@ -267,7 +310,6 @@ public class AES {
 	
 	
 	public static void main(String[] args) throws IOException {
-        out.println("start");
         AES test = new AES();
         
         // for testing
