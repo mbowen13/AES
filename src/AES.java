@@ -322,6 +322,19 @@ public class AES {
 		
 		return res.toString().toUpperCase();
 	}
+
+	// Zero Sum Padding. Pad with zero except the last byte which is equal to the length of the padding
+	private static String padInput(String input) {
+		out.println("Input before padding: " + input); // debugging step
+		StringBuilder res = new StringBuilder();
+		for (int i = 16; i > input.length() + 1; i--) {
+			res.append('0');
+		}
+		res.append(Integer.toString(16 - input.length()));
+		input = input + res.toString();
+		out.println("Padded input is: " + input); // debugging step
+		return input;
+	}
 	
 	
 	public static void main(String[] args) throws IOException {
@@ -330,6 +343,13 @@ public class AES {
         // for testing
         char[] key = new char[16]; // all 0's hardcoded for now
         String input = "0000000000000000"; // 16 bytes
+		// String test1 = "1234" // 4 bytes
+		// String test2 "123456789ABCDEFG" // 16 bytes, should not pad
+		// String test2 = "123456789ABCDEF"; // 15 bytes
+
+		if (input.length() % 16 != 0) {
+			input = padInput(input);
+		}
         
         test.encrypt(input, key);
     }
