@@ -332,7 +332,5 @@ public class AES {
         String input = "0000000000000000"; // 16 bytes
         
         test.encrypt(input, key);
-       
     }
-    
 }
