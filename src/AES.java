@@ -79,33 +79,8 @@ public class AES {
 		};
 	
 	
-//	private static int keySize; // 128 or 256
-//	private static FileInputStream keyFile;
-//    private static FileInputStream inputFile;
-//    private static FileInputStream outputFile;
-//    private static String mode; //encrypt or decrypt
-//    
-//    private int numberOfRounds;
-//    private int numberOfKeys;
-    
-	
-	
-//	public static void readArgs(String[] args) {
-//		keySize = Integer.parseInt(args[0]);
-//		mode = args[4];
-//        try {
-//            keyFile = new FileInputStream(args[1]);
-//            inputFile = new FileInputStream(args[2]);
-//        } catch (FileNotFoundException e) {
-//            err.println(e.getMessage());
-//            exit(1);
-//        }
-//	}
-	
 	public AES() {
-		//keyExpansion();
-		//addRoundKey(state, key);
-		// numberOfRounds = 1;	
+		
 	}
 	
 	// state is 4x4 array
@@ -180,25 +155,59 @@ public class AES {
 	}
 	
 	private static void mixColumns(char[][] state) {
-		char[] vector;
-		// create vector for multiplication against Galoi Fields
-		for(int j = 0; j < 4; j++) {
-			vector = new char[] {state[0][j], state[1][j], state[2][j], state[3][j]};
-			state[0][j] = (char) ((char) mul2[vector[0]] ^ mul3[vector[1]] ^ vector[2] ^ vector[3]);
-			state[1][j] = (char) ((char) vector[0] ^ mul2[vector[1]] ^ mul3[vector[3]] ^ vector[3]);
-			state[2][j] = (char) ((char) vector[0] ^ vector[1] ^ mul2[vector[2]] ^ mul3[vector[3]]);
-			state[3][j] = (char) ((char) mul3[vector[0]] ^ vector[1] ^ vector[2] ^ mul2[vector[3]]);
-		}
+//		char[] vector;
+//		// create vector for multiplication against Galoi Fields
+//		for(int j = 0; j < 4; j++) {
+//			vector = new char[] {state[0][j], state[1][j], state[2][j], state[3][j]};
+//			state[0][j] = (char) ((char) mul2[vector[0]] ^ mul3[vector[1]] ^ vector[2] ^ vector[3]);
+//			state[1][j] = (char) ((char) vector[0] ^ mul2[vector[1]] ^ mul3[vector[3]] ^ vector[3]);
+//			state[2][j] = (char) ((char) vector[0] ^ vector[1] ^ mul2[vector[2]] ^ mul3[vector[3]]);
+//			state[3][j] = (char) ((char) mul3[vector[0]] ^ vector[1] ^ vector[2] ^ mul2[vector[3]]);
+//		}
 		
+		char[][] tmp = new char[4][4];
+		
+		 tmp[0][0] = (char)(mul2[state[0][0]] ^ mul3[state[1][0]] ^ state[2][0] ^ state[3][0]);
+		 tmp[1][0] = (char)(state[0][0] ^ mul2[state[1][0]] ^ mul3[state[2][0]] ^ state[3][0]);
+		 tmp[2][0] = (char)(state[0][0] ^ state[1][0] ^ mul2[state[2][0]] ^ mul3[state[3][0]]);
+		 tmp[3][0] = (char)(mul3[state[0][0]] ^ state[1][0] ^ state[2][0] ^ mul2[state[3][0]]);
+
+		 tmp[0][1] = (char)(mul2[state[0][1]] ^ mul3[state[1][1]] ^ state[2][1] ^ state[3][1]);
+		 tmp[1][1] = (char)(state[0][1] ^ mul2[state[1][1]] ^ mul3[state[2][1]] ^ state[3][1]);
+		 tmp[2][1] = (char)(state[0][1] ^ state[1][1] ^ mul2[state[2][1]] ^ mul3[state[3][1]]);
+		 tmp[3][1] = (char)(mul3[state[0][1]] ^ state[1][1] ^ state[2][1] ^ mul2[state[3][1]]);
+
+		 tmp[0][2] = (char)(mul2[state[0][2]] ^ mul3[state[1][2]] ^ state[2][2] ^ state[3][2]);
+		 tmp[1][2] = (char)(state[0][2] ^ mul2[state[1][2]] ^ mul3[state[2][2]] ^ state[3][2]);
+		 tmp[2][2] = (char)(state[0][2] ^ state[1][2] ^ mul2[state[2][2]] ^ mul3[state[3][2]]);
+		 tmp[3][2] = (char)(mul3[state[0][2]] ^ state[1][2] ^ state[2][2] ^ mul2[state[3][2]]);
+
+		 tmp[0][3] = (char)(mul2[state[0][3]] ^ mul3[state[1][3]] ^ state[2][3] ^ state[3][3]);
+		 tmp[1][3] = (char)(state[0][3] ^ mul2[state[1][3]] ^ mul3[state[2][3]] ^ state[3][3]);
+		 tmp[2][3] = (char)(state[0][3] ^ state[1][3] ^ mul2[state[2][3]] ^ mul3[state[3][3]]);
+		 tmp[3][3] = (char)(mul3[state[0][3]] ^ state[1][3] ^ state[2][3] ^ mul2[state[3][3]]);
+		
+		 
+		 for(int i = 0; i < 4; i++) {
+			 for(int j = 0; j < 4; j++) {
+				 state[i][j] = tmp[i][j];
+			 }
+		 }
+		 
 		// debug
 		out.println("After mixColumns:");
 		out.println(buildString(state).toUpperCase());
 	}
 	
 	private static void addRoundKey(char[][] state, char[] roundKey) {
+		// debug
+//		out.println("Roundkey:");
+//		for(char c : roundKey) out.print(Integer.toHexString((int)c));
+//		out.println("\n");
+		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[j][i] ^= roundKey[4 * i + j];  // ?
+				state[j][i] ^= roundKey[4 * i + j];
 			}
 		}
 	}
@@ -209,13 +218,19 @@ public class AES {
 		
 		// rotate
 		for(int i = 0; i < 4; i++) {
-			tmp[i] = arr[(i + 3) % 4];
+			tmp[i] = arr[(i + 1) % 4];
 		}
 		
 		// replace
 		for(int i = 0; i < 4; i++) {
 			arr[i] = tmp[i];
 		}
+		
+//		char tmp = arr[0];
+//		arr[0] = arr[1];
+//		arr[1] = arr[2];
+//		arr[2] = arr[3];
+//		arr[3] = tmp;
 		
 		// sbox
 		for(int i = 0; i < 4; i++) {
@@ -237,7 +252,7 @@ public class AES {
 		int rconIteration = 1;
 		char tmp[] = new char[4];
 
-		// 176 is 10 rounds + original key since each is 16 bytes each
+		// 176 is 10 rounds + original key since each key is 16 bytes each
 		while(bytesGenerated < 176) {
 			for(int i = 0; i < 4; i++) {
 				tmp[i] = expandedKey[i + bytesGenerated - 4];
@@ -301,11 +316,11 @@ public class AES {
 		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				res.append(Integer.toHexString((int)input[j][i]));
+				res.append(String.format("%02X", (int)input[j][i]));
 			}
 		}
 		
-		return res.toString();
+		return res.toString().toUpperCase();
 	}
 	
 	
