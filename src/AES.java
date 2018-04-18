@@ -270,12 +270,12 @@ public class AES {
 		}
 	}
 	
-	private static void encrypt(String input, char[] key) {
+	private static void encrypt(char[] input, char[] key) {
 		char[][] state = new char[4][4];
 		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[j][i] = key[4 * i + j];
+				state[j][i] = input[4 * i + j];
 			}
 		}
 		
@@ -342,15 +342,23 @@ public class AES {
         
         // for testing
         char[] key = new char[16]; // all 0's hardcoded for now
-        String input = "0000000000000000"; // 16 bytes
-		// String test1 = "1234" // 4 bytes
+        
+		 String input = "1234"; // 4 bytes
 		// String test2 "123456789ABCDEFG" // 16 bytes, should not pad
 		// String test2 = "123456789ABCDEF"; // 15 bytes
+        
+        char[] byteTest = new char[] { 
+        		//0001 0203 0405 0607 0809 0a0b 0c0d 0e0f
+        		0x00, 0x01, 0x02, 0x03,
+        		0x04, 0x05, 0x06, 0x07,
+        		0x08, 0x09, 0x0a, 0x0b,
+        		0x0c, 0x0d, 0x0e, 0x0f
+        };
 
 		if (input.length() % 16 != 0) {
 			input = padInput(input);
 		}
         
-        test.encrypt(input, key);
+        test.encrypt(byteTest, key);
     }
 }
