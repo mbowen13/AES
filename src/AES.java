@@ -208,6 +208,9 @@ public class AES {
 				state[j][i] = invSbox[state[j][i]];
 			}
 		}
+		
+		out.println("After invSubBytes:");
+		out.println(buildString(state).toUpperCase());
 	}
 	
 	private static void shiftRows(char[][] state) {
@@ -275,6 +278,10 @@ public class AES {
 				state[i][j] = tmp[i][j];
 			}
 		}
+		
+		// debug
+		out.println("After invShiftRows:");
+		out.println(buildString(state).toUpperCase());
 	}
 	
 	private static void mixColumns(char[][] state) {
@@ -350,6 +357,9 @@ public class AES {
 				 state[i][j] = tmp[i][j];
 			 }
 		 }
+		
+		out.println("After invMixColumns:");
+		out.println(buildString(state).toUpperCase());
 	}
 	
 	private static void addRoundKey(char[][] state, char[] roundKey) {
@@ -464,31 +474,36 @@ public class AES {
 		out.println(buildString(state));
 	}
 	
-	private static void decrypt(String input, char[] key) {
+	private static void decrypt(char[] input, char[] key) {
 		char[][] state = new char[4][4];
 		
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				state[j][i] = key[4 * i + j];
-				out.print(buildString(state));
+				state[j][i] = input[4 * i + j];
 			}
 		}
 		
+		char[] expandedKey = new char[176];
+		keyExpansion(key, expandedKey);
+		addRoundKey(state, Arrays.copyOfRange(expandedKey, 160, 176));
+		out.println("After addRoundKey("+10+"):");
+		out.println(buildString(state).toUpperCase());
 		
-		out.println("Before: " + buildString(state));
-		addRoundKey(state, key);
-		out.println("After round(0): " + buildString(state));
-        for (int round = 1; round < 9; round++) {
-            invShiftRows(state);
-            invSubBytes(state);
-            invMixColumns(state);
-            addRoundKey(state, key);
-            out.println("After round("+round+"): " + buildString(state));
+        for (int round = 9; round > 0; round--) { // reverse of encrypt, might be too many rounds will have to test
+        		invShiftRows(state);
+        		invSubBytes(state);
+        		addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (round+1), 16 * (round+1) + 16)); // same as encrypt
+        		out.println("After addRoundKey("+(round)+"):");
+    			out.println(buildString(state));    
+        		invMixColumns(state);
         }
+        
         invShiftRows(state);
-        invSubBytes(state);
-        addRoundKey(state, key);
-        out.println("After round("+10+"): " + buildString(state));
+		invSubBytes(state);
+		addRoundKey(state, Arrays.copyOfRange(expandedKey, 0, 16));
+		out.println("After addRoundKey("+0+"):");
+		out.println(buildString(state));
+        
 	}
 	
 	private static String buildString(char[][] input) {
@@ -522,21 +537,17 @@ public class AES {
         
         // for testing
         char[] key = new char[16]; // all 0's hardcoded for now
-        char[] dKey = new char[]{
+        char[] dInput = new char[]{
         		0x66, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c,
         		0xfa, 0x59, 0xca, 0x34, 0x2b, 0x2e
         		};
-         String input = "0000000000000000"; // 16 bytes
-        // String input = "66 E9 4B D4 EF 8A 2C 3B 88 4C FA 59 CA 34 2B 2E"; 
-		// String test1 = "1234" // 4 bytes
-		// String test2 "123456789ABCDEFG" // 16 bytes, should not pad
-		// String test2 = "123456789ABCDEF"; // 15 bytes
+      
 
-		if (input.length() % 16 != 0) {
-			input = padInput(input);
-		}
+//		if (input.length() % 16 != 0) {
+//			input = padInput(input);
+//		}
         
         //test.encrypt(input, key);
-		test.decrypt(input, dKey);
+		test.decrypt(dInput, key);
     }
 }
