@@ -369,20 +369,20 @@ public class AES {
 		tmp[2][0] = (char)(mul13[state[0][0]] ^ mul9[state[1][0]] ^ mul14[state[2][0]] ^ mul11[state[3][0]]);
 		tmp[3][0] = (char)(mul11[state[0][0]] ^ mul13[state[1][0]] ^ mul9[state[2][0]] ^ mul14[state[3][0]]);
 
-		tmp[0][0] = (char)(mul14[state[0][1]] ^ mul11[state[1][1]] ^ mul13[state[2][1]] ^ mul9[state[3][1]]);
-		tmp[1][0] = (char)(mul9[state[0][1]] ^ mul14[state[1][1]] ^ mul11[state[2][1]] ^ mul13[state[3][1]]);
-		tmp[2][0] = (char)(mul13[state[0][1]] ^ mul9[state[1][1]] ^ mul14[state[2][1]] ^ mul11[state[3][1]]);
-		tmp[3][0] = (char)(mul11[state[0][1]] ^ mul13[state[1][1]] ^ mul9[state[2][1]] ^ mul14[state[3][1]]);
+		tmp[0][1] = (char)(mul14[state[0][1]] ^ mul11[state[1][1]] ^ mul13[state[2][1]] ^ mul9[state[3][1]]);
+		tmp[1][1] = (char)(mul9[state[0][1]] ^ mul14[state[1][1]] ^ mul11[state[2][1]] ^ mul13[state[3][1]]);
+		tmp[2][1] = (char)(mul13[state[0][1]] ^ mul9[state[1][1]] ^ mul14[state[2][1]] ^ mul11[state[3][1]]);
+		tmp[3][1] = (char)(mul11[state[0][1]] ^ mul13[state[1][1]] ^ mul9[state[2][1]] ^ mul14[state[3][1]]);
 		
-		tmp[0][0] = (char)(mul14[state[0][2]] ^ mul11[state[1][2]] ^ mul13[state[2][2]] ^ mul9[state[3][2]]);
-		tmp[1][0] = (char)(mul9[state[0][2]] ^ mul14[state[1][2]] ^ mul11[state[2][2]] ^ mul13[state[3][2]]);
-		tmp[2][0] = (char)(mul13[state[0][2]] ^ mul9[state[1][2]] ^ mul14[state[2][2]] ^ mul11[state[3][2]]);
-		tmp[3][0] = (char)(mul11[state[0][2]] ^ mul13[state[1][2]] ^ mul9[state[2][2]] ^ mul14[state[3][2]]);
+		tmp[0][2] = (char)(mul14[state[0][2]] ^ mul11[state[1][2]] ^ mul13[state[2][2]] ^ mul9[state[3][2]]);
+		tmp[1][2] = (char)(mul9[state[0][2]] ^ mul14[state[1][2]] ^ mul11[state[2][2]] ^ mul13[state[3][2]]);
+		tmp[2][2] = (char)(mul13[state[0][2]] ^ mul9[state[1][2]] ^ mul14[state[2][2]] ^ mul11[state[3][2]]);
+		tmp[3][2] = (char)(mul11[state[0][2]] ^ mul13[state[1][2]] ^ mul9[state[2][2]] ^ mul14[state[3][2]]);
 		
-		tmp[0][0] = (char)(mul14[state[0][3]] ^ mul11[state[1][3]] ^ mul13[state[2][3]] ^ mul9[state[3][3]]);
-		tmp[1][0] = (char)(mul9[state[0][3]] ^ mul14[state[1][3]] ^ mul11[state[2][3]] ^ mul13[state[3][3]]);
-		tmp[2][0] = (char)(mul13[state[0][3]] ^ mul9[state[1][3]] ^ mul14[state[2][3]] ^ mul11[state[3][3]]);
-		tmp[3][0] = (char)(mul11[state[0][3]] ^ mul13[state[1][3]] ^ mul9[state[2][3]] ^ mul14[state[3][3]]);
+		tmp[0][3] = (char)(mul14[state[0][3]] ^ mul11[state[1][3]] ^ mul13[state[2][3]] ^ mul9[state[3][3]]);
+		tmp[1][3] = (char)(mul9[state[0][3]] ^ mul14[state[1][3]] ^ mul11[state[2][3]] ^ mul13[state[3][3]]);
+		tmp[2][3] = (char)(mul13[state[0][3]] ^ mul9[state[1][3]] ^ mul14[state[2][3]] ^ mul11[state[3][3]]);
+		tmp[3][3] = (char)(mul11[state[0][3]] ^ mul13[state[1][3]] ^ mul9[state[2][3]] ^ mul14[state[3][3]]);
 		
 		for(int i = 0; i < 4; i++) {
 			 for(int j = 0; j < 4; j++) {
@@ -521,11 +521,11 @@ public class AES {
 		out.println("After addRoundKey("+10+"):");
 		out.println(buildString(state).toUpperCase());
 		
-        for (int round = 9; round > 0; round--) { // reverse of encrypt, might be too many rounds will have to test
+        for (int round = 8; round >= 0; round--) { // reverse of encrypt, might be too many rounds will have to test
         		invShiftRows(state);
         		invSubBytes(state);
         		addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (round+1), 16 * (round+1) + 16)); // same as encrypt
-        		out.println("After addRoundKey("+(round)+"):");
+        		out.println("After addRoundKey("+(round+1)+"):");
     			out.println(buildString(state));    
         		invMixColumns(state);
         }
