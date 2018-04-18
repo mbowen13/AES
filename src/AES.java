@@ -265,12 +265,44 @@ public class AES {
 	private static void invShiftRows(char[][] state) {
 		char[][] tmp = new char[4][4];
 		
-		// shift 
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				tmp[i][j] = state[i][(j+i) % 4];
-			}
-		}
+//		// shift 
+//		for(int i = 0; i < 4; i++) {
+//			for(int j = 0; j < 4; j++) {
+//				tmp[i][j] = state[i][(j+i) % 4];
+//			}
+//		}
+//		
+//		// copy back
+//		for(int i = 0; i < 4; i++) {
+//			for(int j = 0; j < 4; j++) {
+//				state[i][j] = tmp[i][j];
+//			}
+//		}
+		
+
+		// R0 no change
+		tmp[0][0] = state[0][0];
+		tmp[0][1] = state[0][1];
+		tmp[0][2] = state[0][2];
+		tmp[0][3] = state[0][3];
+		
+		// R1 1 right
+		tmp[1][0] = state[1][3];
+		tmp[1][1] = state[1][0];
+		tmp[1][2] = state[1][1];
+		tmp[1][3] = state[1][2];
+		
+		// R2 2 right
+		tmp[2][0] = state[2][2];
+		tmp[2][1] = state[2][3];
+		tmp[2][2] = state[2][0];
+		tmp[2][3] = state[2][1];
+				
+		// R3 3 right
+		tmp[3][0] = state[3][1];
+		tmp[3][1] = state[3][2];
+		tmp[3][2] = state[3][3];
+		tmp[3][3] = state[3][0];
 		
 		// copy back
 		for(int i = 0; i < 4; i++) {
