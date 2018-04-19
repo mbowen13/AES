@@ -586,7 +586,6 @@ public class AES {
 				tmp[counter++] = input[j][i];
 			}
 		}
-		
 		System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(tmp));
  	}
 	
