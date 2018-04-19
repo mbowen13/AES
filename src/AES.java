@@ -209,12 +209,13 @@ public class AES {
 	private static void invSubBytes(byte[][] state) {
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {
-				// state[j][i] = invSbox[state[j][i] & 0xff];
+				state[j][i] = invSbox[state[j][i] & 0xff];
 			}
 		}
 		
 		out.println("After invSubBytes:");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 	}
 	
 	private static void shiftRows(byte[][] state) {
@@ -318,7 +319,8 @@ public class AES {
 		
 		// debug
 		out.println("After invShiftRows:");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 	}
 	
 	private static void mixColumns(byte[][] state) {
@@ -370,25 +372,25 @@ public class AES {
 	private static void invMixColumns(byte[][] state) {
 		byte[][] tmp = new byte[4][4];
 		
-		tmp[0][0] = (byte)(mul14[state[0][0]] ^ mul11[state[1][0]] ^ mul13[state[2][0]] ^ mul9[state[3][0]]);
-		tmp[1][0] = (byte)(mul9[state[0][0]] ^ mul14[state[1][0]] ^ mul11[state[2][0]] ^ mul13[state[3][0]]);
-		tmp[2][0] = (byte)(mul13[state[0][0]] ^ mul9[state[1][0]] ^ mul14[state[2][0]] ^ mul11[state[3][0]]);
-		tmp[3][0] = (byte)(mul11[state[0][0]] ^ mul13[state[1][0]] ^ mul9[state[2][0]] ^ mul14[state[3][0]]);
+		tmp[0][0] = (byte)(mul14[state[0][0] & 0xff] ^ mul11[state[1][0] & 0xff] ^ mul13[state[2][0] & 0xff] ^ mul9[state[3][0] & 0xff]);
+        tmp[1][0] = (byte)(mul9[state[0][0] & 0xff] ^ mul14[state[1][0] & 0xff] ^ mul11[state[2][0] & 0xff] ^ mul13[state[3][0] & 0xff]);
+        tmp[2][0] = (byte)(mul13[state[0][0] & 0xff] ^ mul9[state[1][0] & 0xff] ^ mul14[state[2][0] & 0xff] ^ mul11[state[3][0] & 0xff]);
+        tmp[3][0] = (byte)(mul11[state[0][0] & 0xff] ^ mul13[state[1][0] & 0xff] ^ mul9[state[2][0] & 0xff] ^ mul14[state[3][0] & 0xff]);
 
-		tmp[0][1] = (byte)(mul14[state[0][1]] ^ mul11[state[1][1]] ^ mul13[state[2][1]] ^ mul9[state[3][1]]);
-		tmp[1][1] = (byte)(mul9[state[0][1]] ^ mul14[state[1][1]] ^ mul11[state[2][1]] ^ mul13[state[3][1]]);
-		tmp[2][1] = (byte)(mul13[state[0][1]] ^ mul9[state[1][1]] ^ mul14[state[2][1]] ^ mul11[state[3][1]]);
-		tmp[3][1] = (byte)(mul11[state[0][1]] ^ mul13[state[1][1]] ^ mul9[state[2][1]] ^ mul14[state[3][1]]);
-		
-		tmp[0][2] = (byte)(mul14[state[0][2]] ^ mul11[state[1][2]] ^ mul13[state[2][2]] ^ mul9[state[3][2]]);
-		tmp[1][2] = (byte)(mul9[state[0][2]] ^ mul14[state[1][2]] ^ mul11[state[2][2]] ^ mul13[state[3][2]]);
-		tmp[2][2] = (byte)(mul13[state[0][2]] ^ mul9[state[1][2]] ^ mul14[state[2][2]] ^ mul11[state[3][2]]);
-		tmp[3][2] = (byte)(mul11[state[0][2]] ^ mul13[state[1][2]] ^ mul9[state[2][2]] ^ mul14[state[3][2]]);
-		
-		tmp[0][3] = (byte)(mul14[state[0][3]] ^ mul11[state[1][3]] ^ mul13[state[2][3]] ^ mul9[state[3][3]]);
-		tmp[1][3] = (byte)(mul9[state[0][3]] ^ mul14[state[1][3]] ^ mul11[state[2][3]] ^ mul13[state[3][3]]);
-		tmp[2][3] = (byte)(mul13[state[0][3]] ^ mul9[state[1][3]] ^ mul14[state[2][3]] ^ mul11[state[3][3]]);
-		tmp[3][3] = (byte)(mul11[state[0][3]] ^ mul13[state[1][3]] ^ mul9[state[2][3]] ^ mul14[state[3][3]]);
+        tmp[0][1] = (byte)(mul14[state[0][1] & 0xff] ^ mul11[state[1][1] & 0xff] ^ mul13[state[2][1] & 0xff] ^ mul9[state[3][1] & 0xff]);
+        tmp[1][1] = (byte)(mul9[state[0][1] & 0xff] ^ mul14[state[1][1] & 0xff] ^ mul11[state[2][1] & 0xff] ^ mul13[state[3][1] & 0xff]);
+        tmp[2][1] = (byte)(mul13[state[0][1] & 0xff] ^ mul9[state[1][1] & 0xff] ^ mul14[state[2][1] & 0xff] ^ mul11[state[3][1] & 0xff]);
+        tmp[3][1] = (byte)(mul11[state[0][1] & 0xff] ^ mul13[state[1][1] & 0xff] ^ mul9[state[2][1] & 0xff] ^ mul14[state[3][1] & 0xff]);
+        
+        tmp[0][2] = (byte)(mul14[state[0][2] & 0xff] ^ mul11[state[1][2] & 0xff] ^ mul13[state[2][2] & 0xff] ^ mul9[state[3][2] & 0xff]);
+        tmp[1][2] = (byte)(mul9[state[0][2] & 0xff] ^ mul14[state[1][2] & 0xff] ^ mul11[state[2][2] & 0xff] ^ mul13[state[3][2] & 0xff]);
+        tmp[2][2] = (byte)(mul13[state[0][2] & 0xff] ^ mul9[state[1][2] & 0xff] ^ mul14[state[2][2] & 0xff] ^ mul11[state[3][2] & 0xff]);
+        tmp[3][2] = (byte)(mul11[state[0][2] & 0xff] ^ mul13[state[1][2] & 0xff] ^ mul9[state[2][2] & 0xff] ^ mul14[state[3][2] & 0xff]);
+        
+        tmp[0][3] = (byte)(mul14[state[0][3] & 0xff] ^ mul11[state[1][3] & 0xff] ^ mul13[state[2][3] & 0xff] ^ mul9[state[3][3] & 0xff]);
+        tmp[1][3] = (byte)(mul9[state[0][3] & 0xff] ^ mul14[state[1][3] & 0xff] ^ mul11[state[2][3] & 0xff] ^ mul13[state[3][3] & 0xff]);
+        tmp[2][3] = (byte)(mul13[state[0][3] & 0xff] ^ mul9[state[1][3] & 0xff] ^ mul14[state[2][3] & 0xff] ^ mul11[state[3][3] & 0xff]);
+        tmp[3][3] = (byte)(mul11[state[0][3] & 0xff] ^ mul13[state[1][3] & 0xff] ^ mul9[state[2][3] & 0xff] ^ mul14[state[3][3] & 0xff]);
 		
 		for(int i = 0; i < 4; i++) {
 			 for(int j = 0; j < 4; j++) {
@@ -397,7 +399,8 @@ public class AES {
 		 }
 		
 		out.println("After invMixColumns:");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 	}
 	
 	private static void addRoundKey(byte[][] state, byte[] roundKey) {
@@ -528,14 +531,17 @@ public class AES {
 		keyExpansion(key, expandedKey);
 		addRoundKey(state, Arrays.copyOfRange(expandedKey, 160, 176));
 		out.println("After addRoundKey("+10+"):");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 		
-        for (int round = 8; round >= 0; round--) { // reverse of encrypt, might be too many rounds will have to test
+		
+        for (int round = 8; round >= 0; round--) { 
         		invShiftRows(state);
         		invSubBytes(state);
         		addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (round+1), 16 * (round+1) + 16)); // same as encrypt
         		out.println("After addRoundKey("+(round+1)+"):");
-    			out.println(buildString(state));    
+    			// out.println(buildString(state));
+        		printBinary(state);
         		invMixColumns(state);
         }
         
@@ -543,7 +549,8 @@ public class AES {
 		invSubBytes(state);
 		addRoundKey(state, Arrays.copyOfRange(expandedKey, 0, 16));
 		out.println("After addRoundKey("+0+"):");
-		out.println(buildString(state));
+		// out.println(buildString(state));
+		printBinary(state);
         
 	}
 	
@@ -611,9 +618,9 @@ public class AES {
 
 
 
-        char[] dInput = new char[]{
-        		0x66, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c,
-        		0xfa, 0x59, 0xca, 0x34, 0x2b, 0x2e
+        byte[] dInput = new byte[]{
+        		(byte) 0x66, (byte) 0xe9, (byte) 0x4b, (byte) 0xd4, (byte) 0xef, (byte) 0x8a, (byte) 0x2c, (byte) 0x3b, (byte) 0x88, (byte) 0x4c,
+                (byte) 0xfa, (byte) 0x59, (byte) 0xca, (byte) 0x34, (byte) 0x2b, (byte) 0x2e
         		};
       
 
@@ -628,8 +635,8 @@ public class AES {
         
 
 
-        test.encrypt(input, key);
-		//test.decrypt(dInput, key);
+        // test.encrypt(input, key);
+		test.decrypt(dInput, key);
 
     }
 }
