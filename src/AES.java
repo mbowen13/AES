@@ -219,7 +219,8 @@ public class AES {
 		
 		// debug
 		out.println("After subBytes:");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 	}
 	
 	private static void invSubBytes(byte[][] state) {
@@ -279,7 +280,8 @@ public class AES {
 		
 		// debug
 		out.println("After shiftRows:");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 	}
 	
 	private static void invShiftRows(byte[][] state) {
@@ -378,7 +380,8 @@ public class AES {
 		 
 		// debug
 		out.println("After mixColumns:");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 	}
 	
 	private static void invMixColumns(byte[][] state) {
@@ -501,7 +504,8 @@ public class AES {
 		
 		// debug
 		out.println("After addRoundKey("+0+"):");
-		out.println(buildString(state).toUpperCase());
+		// out.println(buildString(state).toUpperCase());
+		printBinary(state);
 		
 		int numberOfRounds = 9;
 		
@@ -513,7 +517,8 @@ public class AES {
 			addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (i+1), 16 * (i+1) + 16));
 			// debug
 			out.println("After addRoundKey("+(i+1)+"):");
-			out.println(buildString(state));
+			// out.println(buildString(state));
+			printBinary(state);
 		}
 		
 		//final round 
@@ -523,7 +528,8 @@ public class AES {
 		
 		// debug
 		out.println("After addRoundKey("+10+"):");
-		out.println(buildString(state));
+		// out.println(buildString(state));
+		printBinary(state);
 	}
 	
 	private static void decrypt(byte[] input, byte[] key) {
@@ -569,6 +575,20 @@ public class AES {
 		
 		return res.toString().toUpperCase();
 	}
+	
+	private static void printBinary(byte[][] input) {
+		int len = input.length * input[0].length;
+		byte[] tmp = new byte[len];
+		
+		int counter = 0;
+		for(int i = 0; i < input.length; i++) {
+			for(int j = 0; j < input.length; j++) {
+				tmp[counter++] = input[j][i];
+			}
+		}
+		
+		System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(tmp));
+ 	}
 	
 
 
