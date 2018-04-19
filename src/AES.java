@@ -603,7 +603,6 @@ public class AES {
 		}
         
 
-        test.encrypt(input, key);
 
         //test.encrypt(input, key);
 		test.decrypt(dInput, key);
