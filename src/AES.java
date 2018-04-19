@@ -551,15 +551,19 @@ public class AES {
 	}
 
 	// Zero Sum Padding. Pad with zero except the last byte which is equal to the length of the padding
-	private static String padInput(String input) {
-		out.println("Input before padding: " + input); // debugging step
-		StringBuilder res = new StringBuilder();
-		for (int i = 16; i > input.length() + 1; i--) {
-			res.append('0');
+	// 123456789
+	// 123456789000006
+	private static byte[] padInput(byte[] input) {
+		out.println("Input before padding: " + Arrays.toString(input)); // debugging step
+		byte[] res = new byte[16];
+		for (int i = 0; i < input.length; i++) { 
+			res[i] = input[i]; 
 		}
-		res.append(Integer.toString(16 - input.length()));
-		input = input + res.toString();
-		out.println("Padded input is: " + input); // debugging step
+		for (int i = input.length; i < 15; i++) {
+			res[i] = (byte) 0;
+		}
+		res[15] = (byte) (16 - input.length);
+		out.println("Padded input is: " + Arrays.toString(res)); // debugging step
 		return input;
 	}
 	
@@ -569,6 +573,19 @@ public class AES {
         
         // for testing
         char[] key = new char[16]; // all 0's hardcoded for now
+        
+		byte[] input = {1, 2, 3, 4, 5, 6, 7, 8};
+        // byte[] test = {1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'};
+        
+        char[] byteTest = new char[] { 
+        		//0001 0203 0405 0607 0809 0a0b 0c0d 0e0f
+        		0x00, 0x01, 0x02, 0x03,
+        		0x04, 0x05, 0x06, 0x07,
+        		0x08, 0x09, 0x0a, 0x0b,
+        		0x0c, 0x0d, 0x0e, 0x0f
+        };
+
+
 
         char[] dInput = new char[]{
         		0x66, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 0x88, 0x4c,
@@ -580,6 +597,10 @@ public class AES {
 //		if (input.length() % 16 != 0) {
 //			input = padInput(input);
 //		}
+
+		if (input.length % 16 != 0) {
+			input = padInput(input);
+		}
         
 
         test.encrypt(input, key);
