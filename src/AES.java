@@ -576,7 +576,8 @@ public class AES {
 				tmp[counter++] = input[j][i];
 			}
 		}
-		System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(tmp));
+		// System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(tmp));
+		out.println("binary output would go here");
  	}
 	
 
@@ -600,13 +601,41 @@ public class AES {
 	
 	
 	public static void main(String[] args) throws IOException {
+		// ./program --keysize $KEYSIZE --keyfile $KEYFILE --inputfile $INPUTFILE --outputfile $OUTFILENAME --mode $MODE
+		String keysize = args[1];
+		String keyfile = args[3];
+		String input_file_name = args[5];
+		String output_file_name = args[7];
+		String mode = args[9];
+		out.printf("Keysize is %s\n", keysize);
+		out.printf("Keyfile is %s\n", keyfile);
+		out.printf("Input file is %s\n", input_file_name);
+		out.printf("Output file is %s\n", output_file_name);
+		out.printf("Mode is %s\n", mode);
+
+		FileInputStream input_file = new FileInputStream(input_file_name);
+		// * important, file must not have extra \n at end of file
+
+		// if ((size != 256) && (size != 128)) {
+		// 	out.println("WRONG KEY SIZE");
+		// }
+
+		// populating a char array with the values from byte file
+		int size = input_file.available();
+		byte[] input = new byte[size];
+		for(int i = 0; i < size; i++) {
+			input[i] = (byte) input_file.read();
+		}
+		out.println(Arrays.toString(input)); // Debugging step
+
         AES test = new AES();
         
         // for testing
         byte[] key = new byte[16]; // all 0's hardcoded for now
         
-		byte[] input = new byte[16];
-        // byte[] test = {1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'};
+		if (input.length % 16 != 0) {
+			input = padInput(input);
+		}
         
         char[] byteTest = new char[] { 
         		//0001 0203 0405 0607 0809 0a0b 0c0d 0e0f
@@ -622,20 +651,19 @@ public class AES {
         		(byte) 0x66, (byte) 0xe9, (byte) 0x4b, (byte) 0xd4, (byte) 0xef, (byte) 0x8a, (byte) 0x2c, (byte) 0x3b, (byte) 0x88, (byte) 0x4c,
                 (byte) 0xfa, (byte) 0x59, (byte) 0xca, (byte) 0x34, (byte) 0x2b, (byte) 0x2e
         		};
-      
-
-
-//		if (input.length() % 16 != 0) {
-//			input = padInput(input);
-//		}
-
-		if (input.length % 16 != 0) {
-			input = padInput(input);
-		}
-        
-
 
         // test.encrypt(input, key);
+		// Future Steps
+
+		// have encrypt return a byte array
+		// byte[] result = test.encrypt(byteTest, key);
+
+		// Write results to output file
+		// FileOutputStream output_file = new FileOutputStream(output_file_name);
+		// for(int i = 0; i < result.length; i++) {
+		// 	output_file.write(result[i]);
+		// }
+		
 		test.decrypt(dInput, key);
 
     }
