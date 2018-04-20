@@ -405,15 +405,24 @@ public class AES {
 	
 	private static void addRoundKey(byte[][] state, byte[] roundKey) {
 		// debug
-//		out.println("Roundkey:");
+		out.println("Roundkey:");
+		printBinary(roundKey);
 //		for(char c : roundKey) out.print(Integer.toHexString((int)c));
 //		out.println("\n");
-		
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				state[j][i] ^= roundKey[4 * i + j];
+		if(roundKey.length == 16) {
+			for(int i = 0; i < 4; i++) {
+				for(int j = 0; j < 4; j++) {
+					state[j][i] ^= roundKey[4 * i + j];
+				}
 			}
 		}
+//		else if(roundKey.length == 32) {
+//			for(int i = 0; i < 4; i++) {
+//				for(int j = 0; j < 4; j++) {
+//					state[j][i] ^= roundKey[4 * i + j];
+//				}
+//			}
+//		}
 	}
 	
 	private static void keyExpansionCore(byte[] arr, int rConIndex) {
@@ -430,12 +439,6 @@ public class AES {
 			arr[i] = tmp[i];
 		}
 		
-//		char tmp = arr[0];
-//		arr[0] = arr[1];
-//		arr[1] = arr[2];
-//		arr[2] = arr[3];
-//		arr[3] = tmp;
-		
 		// sbox
 		for(int i = 0; i < 4; i++) {
 			arr[i] = sbox[arr[i] & 0xff];
@@ -447,29 +450,55 @@ public class AES {
 	}
 	
 	// expand 16 byte key to 176 byte key
+	// expand 32 byte key to 240 byte key
 	private static void keyExpansion(byte[] inputKey, byte[] expandedKey) {
-		for(int i = 0; i < 16; i++) {
+		for(int i = 0; i < inputKey.length; i++) {
 			expandedKey[i] = inputKey[i];
 		}
 		
-		int bytesGenerated = 16;
-		int rconIteration = 1;
-		byte tmp[] = new byte[4];
+		if(inputKey.length == 16) {
+			int bytesGenerated = inputKey.length;
+			int rconIteration = 1;
+			byte tmp[] = new byte[4];
 
-		// 176 is 10 rounds + original key since each key is 16 bytes each
-		while(bytesGenerated < 176) {
-			for(int i = 0; i < 4; i++) {
-				tmp[i] = expandedKey[i + bytesGenerated - 4];
+			// 176 is 10 rounds + original key since each key is 16 bytes each
+			while(bytesGenerated < 176) {
+				for(int i = 0; i < 4; i++) {
+					tmp[i] = expandedKey[i + bytesGenerated - 4];
+				}
+				
+				// Call the core once for each 16 byte key
+				// modifies tmp 
+				if(bytesGenerated % 16 == 0) 
+					keyExpansionCore(tmp, rconIteration++);
+				
+				for(int i = 0; i < 4; i++) {
+					expandedKey[bytesGenerated] = (byte)(expandedKey[bytesGenerated - 16] ^ tmp[i]);
+					bytesGenerated++;
+				}
 			}
-			
-			// Call the core once for each 16 byte key
-			// modifies tmp 
-			if(bytesGenerated % 16 == 0) 
-				keyExpansionCore(tmp, rconIteration++);
-			
-			for(int i = 0; i < 4; i++) {
-				expandedKey[bytesGenerated] = (byte)(expandedKey[bytesGenerated - 16] ^ tmp[i]);
-				bytesGenerated++;
+		}
+		
+		if(inputKey.length == 32) {
+			int bytesGenerated = inputKey.length;
+			int rconIteration = 1;
+			byte tmp[] = new byte[4];
+
+			// 480 is 14 rounds + original key of 32 bytes each
+			while(bytesGenerated < 240) {
+				for(int i = 0; i < 4; i++) {
+					tmp[i] = expandedKey[i + bytesGenerated - 4];
+				}
+				
+				// Call the core once for each 16 byte key
+				// modifies tmp 
+				if(bytesGenerated % 16 == 0) 
+					keyExpansionCore(tmp, rconIteration++);
+				
+				for(int i = 0; i < 4; i++) {
+					expandedKey[bytesGenerated] = (byte)(expandedKey[bytesGenerated - 16] ^ tmp[i]);
+					bytesGenerated++;
+				}
 			}
 		}
 	}
@@ -483,39 +512,81 @@ public class AES {
 			}
 		}
 		
-		// placement?
-		byte[] expandedKey = new byte[176];
-		keyExpansion(key, expandedKey);
-		addRoundKey(state, key);
 		
-		// debug
-		out.println("After addRoundKey("+0+"):");
-		// out.println(buildString(state).toUpperCase());
-		printBinary(state);
-		
-		int numberOfRounds = 9;
-		
-		for(int i = 0; i < numberOfRounds; i++) {
+		if(key.length == 16) {
+			// placement?
+			byte[] expandedKey = new byte[176];
+			keyExpansion(key, expandedKey);
+			addRoundKey(state, key);
+			
+			// debug
+			out.println("After addRoundKey("+0+"):");
+			// out.println(buildString(state).toUpperCase());
+			printBinary(state);
+			
+			int numberOfRounds = 9;
+			
+			for(int i = 0; i < numberOfRounds; i++) {
+				subBytes(state);
+				shiftRows(state);
+				mixColumns(state);
+				// correct param for expandedKey?
+				addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (i+1), 16 * (i+1) + 16));
+				// debug
+				out.println("After addRoundKey("+(i+1)+"):");
+				// out.println(buildString(state));
+				printBinary(state);
+			}
+			
+			//final round 
 			subBytes(state);
 			shiftRows(state);
-			mixColumns(state);
-			// correct param for expandedKey?
-			addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (i+1), 16 * (i+1) + 16));
+			addRoundKey(state, Arrays.copyOfRange(expandedKey, 160, 176));
+			
 			// debug
-			out.println("After addRoundKey("+(i+1)+"):");
+			out.println("After addRoundKey("+10+"):");
 			// out.println(buildString(state));
 			printBinary(state);
 		}
+		else if(key.length == 32) {
+			// placement?
+			byte[] expandedKey = new byte[240];
+			keyExpansion(key, expandedKey);
+			addRoundKey(state, Arrays.copyOfRange(expandedKey, 0, 16)); // or 16 and then do a round?
+			
+			// debug
+			out.println("After addRoundKey("+0+"):");
+			// out.println(buildString(state).toUpperCase());
+			printBinary(state);
+			
+			int numberOfRounds = 13;
+			
+			for(int i = 0; i < numberOfRounds; i++) {
+				subBytes(state);
+				shiftRows(state);
+				mixColumns(state);
+				// correct param for expandedKey?
+				addRoundKey(state, Arrays.copyOfRange(expandedKey, 16 * (i+1), 16 * (i+1) + 16));
+				// debug
+				out.println("After addRoundKey("+(i+1)+"):");
+				// out.println(buildString(state));
+				printBinary(state);
+			}
+			
+			//final round 
+			subBytes(state);
+			shiftRows(state);
+			addRoundKey(state, Arrays.copyOfRange(expandedKey, 224, 240));
+			
+			// debug
+			out.println("After addRoundKey("+14+"):");
+			// out.println(buildString(state));
+			printBinary(state);	
+		}
+		else {
+				System.out.println("Key size invalid.");
+		}
 		
-		//final round 
-		subBytes(state);
-		shiftRows(state);
-		addRoundKey(state, Arrays.copyOfRange(expandedKey, 160, 176));
-		
-		// debug
-		out.println("After addRoundKey("+10+"):");
-		// out.println(buildString(state));
-		printBinary(state);
 	}
 	
 	private static void decrypt(byte[] input, byte[] key) {
@@ -579,6 +650,10 @@ public class AES {
 		System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(tmp));
  	}
 	
+	private static void printBinary(byte[] input) {
+		System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(input));
+ 	}
+	
 
 
 	// Zero Sum Padding. Pad with zero except the last byte which is equal to the length of the padding
@@ -604,6 +679,25 @@ public class AES {
         
         // for testing
         byte[] key = new byte[16]; // all 0's hardcoded for now
+        
+        
+        
+        
+        
+        // 00112233445566778899AABBCCDDEEFF
+        byte[] input32 = new byte[] {
+                (byte) 0x00, (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
+                (byte) 0x88, (byte) 0x99, (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0xee, (byte) 0xff
+        };
+        
+        byte[] key32 = {
+        		(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
+        		(byte) 0x08, (byte) 0x09, (byte) 0x0a, (byte) 0x0b, (byte) 0x0c, (byte) 0x0d, (byte) 0x0e, (byte) 0x0f,
+        		(byte) 0x10, (byte) 0x011, (byte) 0x12, (byte) 0x13, (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17,
+        		(byte) 0x18, (byte) 0x19, (byte) 0x1a, (byte) 0x1b, (byte) 0x1c, (byte) 0x1d, (byte) 0x1e, (byte) 0x1f
+        	};
+        
+        
         
 		byte[] input = new byte[16];
         // byte[] test = {1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -635,8 +729,8 @@ public class AES {
         
 
 
-        // test.encrypt(input, key);
-		test.decrypt(dInput, key);
+        test.encrypt(input32, key32);
+		// test.decrypt(dInput, key);
 
     }
 }
