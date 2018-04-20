@@ -429,7 +429,7 @@ public class AES {
 		// arr is tmp from keyExpansion()
 		byte[] tmp = new byte[4];
 		
-		// rotate
+		// rotate, rot word
 		for(int i = 0; i < 4; i++) {
 			tmp[i] = arr[(i + 1) % 4];
 		}
@@ -439,7 +439,7 @@ public class AES {
 			arr[i] = tmp[i];
 		}
 		
-		// sbox
+		// sbox, subword
 		for(int i = 0; i < 4; i++) {
 			arr[i] = sbox[arr[i] & 0xff];
 		}
@@ -457,7 +457,7 @@ public class AES {
 		}
 		
 		if(inputKey.length == 16) {
-			int bytesGenerated = inputKey.length;
+			int bytesGenerated = 16;
 			int rconIteration = 1;
 			byte tmp[] = new byte[4];
 
@@ -480,11 +480,11 @@ public class AES {
 		}
 		
 		if(inputKey.length == 32) {
-			int bytesGenerated = inputKey.length;
+			int bytesGenerated = 32;
 			int rconIteration = 1;
 			byte tmp[] = new byte[4];
 
-			// 480 is 14 rounds + original key of 32 bytes each
+			// 240 is 14 rounds + original key of 16 bytes each
 			while(bytesGenerated < 240) {
 				for(int i = 0; i < 4; i++) {
 					tmp[i] = expandedKey[i + bytesGenerated - 4];
@@ -492,13 +492,16 @@ public class AES {
 				
 				// Call the core once for each 16 byte key
 				// modifies tmp 
-				if(bytesGenerated % 16 == 0) 
+				if(bytesGenerated % 16 == 0) {
 					keyExpansionCore(tmp, rconIteration++);
+				}
+					
 				
 				for(int i = 0; i < 4; i++) {
 					expandedKey[bytesGenerated] = (byte)(expandedKey[bytesGenerated - 16] ^ tmp[i]);
 					bytesGenerated++;
 				}
+				
 			}
 		}
 	}
@@ -678,7 +681,7 @@ public class AES {
         AES test = new AES();
         
         // for testing
-        byte[] key = new byte[16]; // all 0's hardcoded for now
+        byte[] key16 = new byte[16]; // all 0's hardcoded for now
         
         
         
@@ -690,6 +693,8 @@ public class AES {
                 (byte) 0x88, (byte) 0x99, (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0xee, (byte) 0xff
         };
         
+        // byte[] key32 = new byte[32];
+        
         byte[] key32 = {
         		(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
         		(byte) 0x08, (byte) 0x09, (byte) 0x0a, (byte) 0x0b, (byte) 0x0c, (byte) 0x0d, (byte) 0x0e, (byte) 0x0f,
@@ -699,7 +704,7 @@ public class AES {
         
         
         
-		byte[] input = new byte[16];
+		byte[] input16 = new byte[16];
         // byte[] test = {1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'};
         
         char[] byteTest = new char[] { 
@@ -718,14 +723,9 @@ public class AES {
         		};
       
 
-
-//		if (input.length() % 16 != 0) {
+//		if (input.length % 16 != 0) {
 //			input = padInput(input);
 //		}
-
-		if (input.length % 16 != 0) {
-			input = padInput(input);
-		}
         
 
 
