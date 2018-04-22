@@ -588,23 +588,22 @@ public class AES {
 			if (Integer.parseInt(keysize) == 128) {
 				out.println("You got into ENCRYPT 128");
 				byte[] key128 = new byte[16];
-				byte[] input128 = new byte[] {
-					(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-				};
-				// int size = input_file.available();
-				// byte[] input128 = new byte[size];
-				// for(int i = 0; i < size; i++) {
-				// 	input128[i] = (byte) input_file.read();
+				// byte[] input = new byte[] {
+				// 	(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+				// };
+				int size = input_file.available();
+				byte[] input128 = new byte[size];
+				for(int i = 0; i < size; i++) {
+					input128[i] = (byte) input_file.read();
+				}
+				
+				// debug condition to make sure input file read in correctly
+				// if (Arrays.equals(input128, input)) {
+				// 	out.println("GOOD TO GO");
 				// }
 				
 				AES aes = new AES(key128, input128);
 				byte[][] result = aes.encrypt();
-				// out.println(Arrays.toString(result));
-				// for(int i = 0; i < result.length; i++) {
-				// 	for (int j = 0; j < result[0].length; j++) {
-				// 		output_file.write(result[i][j]);
-				// 	}
-				// }
 
 				int counter = 0;
 				for(int i = 0; i < result.length; i++) {
