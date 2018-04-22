@@ -462,7 +462,7 @@ public class AES {
 		return(state);
     }
     
-    private void decrypt() {
+    private byte[][] decrypt() {
         addRoundKey(Nr);
         
         for (int round = 1; round < Nr; round++) {
@@ -476,6 +476,7 @@ public class AES {
         addRoundKey(0);
         
         printBinary(state);
+		return state;
     }
     
     // debug
@@ -638,11 +639,40 @@ public class AES {
 		} else if (mode.toLowerCase().equals("decrypt")) {
 			if (Integer.parseInt(keysize) == 128) {
 				out.println("You got into DECRYPT 128");
-				byte[] dInput128 = new byte[] {
+				// byte[] key = new byte[16];
+				int size = key_file.available();
+				// pad if not multiple of 16
+				byte[] key = new byte[size];
+				for(int i = 0; i < size; i++) {
+					key[i] = (byte) key_file.read();
+				}
+
+				size = input_file.available();
+				byte[] input128 = new byte[size];
+				for(int i = 0; i < size; i++) {
+					input128[i] = (byte) input_file.read();
+				}
+
+				/* Debugging to make sure key and input files are read in correctly */
+				byte[] input128_test = new byte[] {
 						(byte) 0x66, (byte) 0xe9, (byte) 0x4b, (byte) 0xd4, (byte) 0xef, (byte) 0x8a, (byte) 0x2c, (byte) 0x3b, (byte) 0x88, (byte) 0x4c,
 						(byte) 0xfa, (byte) 0x59, (byte) 0xca, (byte) 0x34, (byte) 0x2b, (byte) 0x2e
 				};
-				// AES aes = new AES(key, dinput128);
+
+				if (Arrays.equals(input128, input128_test)) {
+					out.println("decrypt inputs match!");
+				}
+				/* End of debugging step */
+
+				AES aes = new AES(key, input128_test);
+				byte[][] result = aes.decrypt();
+
+				int counter = 0;
+				for(int i = 0; i < result.length; i++) {
+					for(int j = 0; j < result.length; j++) {
+						output_file.write(result[j][i]);
+					}
+				}
 			} else if (Integer.parseInt(keysize) == 256) {
 				out.println("You got into DECRYPT 256");
 				// byte[] dInput256 = new byte[] {
