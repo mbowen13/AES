@@ -2,11 +2,12 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import static java.lang.System.*;
+import javax.xml.bind.DatatypeConverter;
 
 public class AES {
 	private static int keySize; // 128 or 256
-  private static FileInputStream keyFile;
-  private static FileInputStream inputFile;
+  	private static FileInputStream keyFile;
+  	private static FileInputStream inputFile;
     private static FileInputStream outputFile;
     private static String mode; //encrypt or decrypt
 
@@ -443,7 +444,7 @@ public class AES {
         // printBinary(schedule);
     }
     
-    private static void encrypt() {
+    private static byte[][] encrypt() {
         addRoundKey(0);
         
         for(int round = 1; round < Nr; round++) {
@@ -458,6 +459,7 @@ public class AES {
         addRoundKey(Nr);
         
         printBinary(state);
+		return(state);
     }
     
     private void decrypt() {
@@ -524,16 +526,16 @@ public class AES {
 	
 	public static void main(String[] args) throws IOException {
 //		// ./program --keysize $KEYSIZE --keyfile $KEYFILE --inputfile $INPUTFILE --outputfile $OUTFILENAME --mode $MODE
-////		String keysize = args[1];
-////		String keyfile = args[3];
-////		String input_file_name = args[5];
-////		String output_file_name = args[7];
-////		String mode = args[9];
-////		out.printf("Keysize is %s\n", keysize);
-////		out.printf("Keyfile is %s\n", keyfile);
-////		out.printf("Input file is %s\n", input_file_name);
-////		out.printf("Output file is %s\n", output_file_name);
-////		out.printf("Mode is %s\n", mode);
+		String keysize = args[1];
+		String keyfile = args[3];
+		String input_file_name = args[5];
+		String output_file_name = args[7];
+		String mode = args[9];
+		out.printf("Keysize is %s\n", keysize);
+		out.printf("Keyfile is %s\n", keyfile);
+		out.printf("Input file is %s\n", input_file_name);
+		out.printf("Output file is %s\n", output_file_name);
+		out.printf("Mode is %s\n", mode);
 //
 //		// FileInputStream input_file = new FileInputStream(input_file_name);
 //		// * important, file must not have extra \n at end of file
@@ -542,7 +544,6 @@ public class AES {
 //		// 	out.println("WRONG KEY SIZE");
 //		// }
 //
-//		// populating a char array with the values from byte file
 ////		int size = input_file.available();
 ////		byte[] input = new byte[size];
 ////		for(int i = 0; i < size; i++) {
@@ -566,12 +567,6 @@ public class AES {
 //        };
 //
 //
-//
-//        byte[] dInput = new byte[]{
-//        		(byte) 0x66, (byte) 0xe9, (byte) 0x4b, (byte) 0xd4, (byte) 0xef, (byte) 0x8a, (byte) 0x2c, (byte) 0x3b, (byte) 0x88, (byte) 0x4c,
-//                (byte) 0xfa, (byte) 0x59, (byte) 0xca, (byte) 0x34, (byte) 0x2b, (byte) 0x2e
-//        		};
-//
 //        // test.encrypt(input, key);
 //		// Future Steps
 //
@@ -585,37 +580,72 @@ public class AES {
 //		// }
 //		AES test = new AES(key, dInput);
 //		test.decrypt();
-		
-		byte[] key128 = new byte[16];
-        byte[] input128 = new byte[16];
-        
-        byte[] dInput128 = new byte[] {
-                (byte) 0x66, (byte) 0xe9, (byte) 0x4b, (byte) 0xd4, (byte) 0xef, (byte) 0x8a, (byte) 0x2c, (byte) 0x3b, (byte) 0x88, (byte) 0x4c,
-                (byte) 0xfa, (byte) 0x59, (byte) 0xca, (byte) 0x34, (byte) 0x2b, (byte) 0x2e
-        };
-        
-        byte[] key256 = new byte[32];
-        byte[] input256 = new byte[] {
-                (byte) 0x00, (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
-                (byte) 0x88, (byte) 0x99, (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0xee, (byte) 0xff
-        };
-        
-        byte[] dInput256 = new byte[] {
-                0x1c, 0x06, 0x0f, 0x4c, 
-                (byte) 0x9e, 0x7e, (byte) 0xa8, (byte) 0xd6,
-                (byte) 0xca, (byte) 0x96, 0x1a, 0x2d,
-                0x64, (byte) 0xc0, 0x5c, 0x18
-        };
-        
-        
-        
-        AES aes = new AES(key128, dInput128);
-        
-        // aes.encrypt();
-        aes.decrypt();
 
-    }
-       
+		FileInputStream input_file = new FileInputStream(input_file_name);
+		FileOutputStream output_file = new FileOutputStream(output_file_name);
+
+		if (mode.toLowerCase().equals("encrypt")) {
+			if (Integer.parseInt(keysize) == 128) {
+				out.println("You got into ENCRYPT 128");
+				byte[] key128 = new byte[16];
+				byte[] input128 = new byte[] {
+					(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+				};
+				// int size = input_file.available();
+				// byte[] input128 = new byte[size];
+				// for(int i = 0; i < size; i++) {
+				// 	input128[i] = (byte) input_file.read();
+				// }
+				
+				AES aes = new AES(key128, input128);
+				byte[][] result = aes.encrypt();
+				// out.println(Arrays.toString(result));
+				// for(int i = 0; i < result.length; i++) {
+				// 	for (int j = 0; j < result[0].length; j++) {
+				// 		output_file.write(result[i][j]);
+				// 	}
+				// }
+
+				int counter = 0;
+				for(int i = 0; i < result.length; i++) {
+					for(int j = 0; j < result.length; j++) {
+						output_file.write(result[j][i]);
+					}
+				}
+
+			} else if (Integer.parseInt(keysize) == 256) {
+				out.println("You got into ENCRYPT 256");
+				byte[] key256 = new byte[32];
+				byte[] input256 = new byte[] {
+						(byte) 0x00, (byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
+						(byte) 0x88, (byte) 0x99, (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0xee, (byte) 0xff};
+				AES aes = new AES(key256, input256);
+			} else {
+				out.println("ERROR!");
+			}
+		} else if (mode.toLowerCase().equals("decrypt")) {
+			if (Integer.parseInt(keysize) == 128) {
+				out.println("You got into DECRYPT 128");
+				byte[] dInput128 = new byte[] {
+						(byte) 0x66, (byte) 0xe9, (byte) 0x4b, (byte) 0xd4, (byte) 0xef, (byte) 0x8a, (byte) 0x2c, (byte) 0x3b, (byte) 0x88, (byte) 0x4c,
+						(byte) 0xfa, (byte) 0x59, (byte) 0xca, (byte) 0x34, (byte) 0x2b, (byte) 0x2e
+				};
+				// AES aes = new AES(key, dinput128);
+			} else if (Integer.parseInt(keysize) == 256) {
+				out.println("You got into DECRYPT 256");
+				// byte[] dInput256 = new byte[] {
+                // 0x1c, 0x06, 0x0f, 0x4c, 
+                // (byte) 0x9e, 0x7e, (byte) 0xa8, (byte) 0xd6,
+                // (byte) 0xca, (byte) 0x96, 0x1a, 0x2d,
+                // 0x64, (byte) 0xc0, 0x5c, 0x18};
+				// AES aes = new AES(key, dinput256)
+			} else {
+				out.println("ERROR!");
+			}
+		} else {
+			out.println("ERROR!");
+		}
+    }      
 }
-    
+
 
