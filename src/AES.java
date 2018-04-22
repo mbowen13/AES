@@ -582,27 +582,40 @@ public class AES {
 //		test.decrypt();
 
 		FileInputStream input_file = new FileInputStream(input_file_name);
+		FileInputStream key_file = new FileInputStream(input_file_name);
 		FileOutputStream output_file = new FileOutputStream(output_file_name);
 
 		if (mode.toLowerCase().equals("encrypt")) {
 			if (Integer.parseInt(keysize) == 128) {
 				out.println("You got into ENCRYPT 128");
-				byte[] key128 = new byte[16];
-				// byte[] input = new byte[] {
-				// 	(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-				// };
-				int size = input_file.available();
+
+				int size = key_file.available();
+				// pad if not multiple of 16
+				byte[] key = new byte[size];
+				for(int i = 0; i < size; i++) {
+					key[i] = (byte) key_file.read();
+				}
+
+				size = input_file.available();
 				byte[] input128 = new byte[size];
 				for(int i = 0; i < size; i++) {
 					input128[i] = (byte) input_file.read();
 				}
 				
-				// debug condition to make sure input file read in correctly
-				// if (Arrays.equals(input128, input)) {
-				// 	out.println("GOOD TO GO");
-				// }
+				/* Debugging to make sure key and input files are read in correctly */
+				byte[] test_key = new byte[16];
+				byte[] test_input128 = new byte[] {
+					(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+				};
+				if (Arrays.equals(key, test_key)) {
+					out.println("KEYFILE READ CORRECTLY");
+				}
+				if (Arrays.equals(input128, test_input128)) {
+					out.println("INPUTFILE READ CORRECTLY");
+				}
+				/* end of debug section */
 				
-				AES aes = new AES(key128, input128);
+				AES aes = new AES(key, input128);
 				byte[][] result = aes.encrypt();
 
 				int counter = 0;
