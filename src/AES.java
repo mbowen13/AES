@@ -162,6 +162,15 @@ public class AES {
             (byte) 0xd7,(byte) 0xd9,(byte) 0xcb,(byte) 0xc5,(byte) 0xef,(byte) 0xe1,(byte) 0xf3,(byte) 0xfd,(byte) 0xa7,(byte) 0xa9,(byte) 0xbb,(byte) 0xb5,(byte) 0x9f,(byte) 0x91,(byte) 0x83,(byte) 0x8d
     };
     
+    private static int[] rcon = new int[] {
+    		// must shift to the left to xor
+    		// since value x^{i-1} must be in 
+    		// the left most 8 bits of a 32 bit word
+    		0x00, (byte) 0x01 << 24, (byte) 0x02 << 24, (byte) 0x04 << 24,
+    		(byte) 0x08 << 24, (byte) 0x10 << 24, (byte) 0x20 << 24, (byte) 0x40 << 24,
+    		(byte) 0x80 << 24, (byte) 0x1b << 24, (byte) 0x36 << 24
+    };
+    
     // cipher key
     private static byte[] K;
     
@@ -407,22 +416,6 @@ public class AES {
                             ((K[k + 2] & 0xff) << 8) | // 2nd lowest 8 bits
                             ((K[k + 3] & 0xff)); // lowest 8 bits
         }
-        
-        int[] rcon = new int[11];
-        
-        // must shift to the left to xor
-        // since value x^{i-1} must be in 
-        // the left most 8 bits of a 32 bit word
-        rcon[1] = (byte) 0x01 << 24;
-        rcon[2] = (byte) 0x02 << 24;
-        rcon[3] = (byte) 0x04 << 24;
-        rcon[4] = (byte) 0x08 << 24;
-        rcon[5] = (byte) 0x10 << 24;
-        rcon[6] = (byte) 0x20 << 24;
-        rcon[7] = (byte) 0x40 << 24;
-        rcon[8] = (byte) 0x80 << 24;
-        rcon[9] = (byte) 0x1b << 24;
-        rcon[10] = (byte) 0x36 << 24;
         
         int temp;
         
