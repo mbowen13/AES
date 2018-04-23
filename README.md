@@ -5,6 +5,7 @@ Claire Dubiel, Tin La, Michael Bowen
 This program takes in a 128 or 256 bit key and a 16 byte plaintext or ciphertext byte file. Depending on the key size, the plaintext/ciphertext will be encrypted/decrypted with AES128 or AES256. The output will be an encrypted ciphertext or decrypted plaintext.
 
 ## How To Run
+```
 Directory structure
 
 src/
@@ -28,7 +29,7 @@ src/
 			TESTFILE
 			OUTFILENAME
 
-1. Run this to compile (--add-modules flag if it complains about module package without the flag)javac --add-modules java.xml.bind AES.java
+1. Run this to compile (--add-modules flag if it complains about module package without the flag, otherwise remove --add-modules flag the command)javac --add-modules java.xml.bind AES.java
 
 
 2. Pick one 
@@ -43,7 +44,7 @@ java --add-modules java.xml.bind AES --keysize 128 --keyfile decrypt/128/KEYFILE
 
 d. decrypt 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile decrypt/256/KEYFILE --inputfile decrypt/256/INPUTFILE --outputfile decrypt/256/OUTFILENAME --mode DECRYPT
-
+```
 
 ## Implementation
 
@@ -51,6 +52,50 @@ The following is a brief explanation of our implementation. For more information
 
 
 ### Algorithm
+AES uses repeat cycles or "rounds". There are 10, 12, or 14 rounds for keys of 128, 192, and 256 bits,
+respectively, for both encryption and decryption. In our implementation we only had to handle 128 and 256 bit key sizes.
+
+The input text is represented as a 4 x 4 array of bytes. 
+
+The key is represented as a 4 x n array of bytes, where n depends on the key size.
+
+#### Key Expansion
+The key expansion step is slightly different for 256 bit keys than it is for 128 bit keys. 
+For 128 bit keys....do this.
+For 256 bit keys....do that.
+
+#### Encrption
+Each round of the encryption algorithm consists of four steps:
+
+- subBytes: for each byte in the array, use its value as an index into a fixed 256-element lookup table, Sbox,
+and replace its value in the state by the byte value stored at that location in the table. 
+
+- shiftRows: Let Ri denote the ith row in state. Shift R0 in the state left 0 bytes (i.e., no change); shift
+R1 left 1 byte; shift R2 left 2 bytes; shift R3 left 3 bytes. These are circular shifts. They do not affect
+the individual byte values themselves.
+
+- mixColumns: for each column of the state, replace the column by its value multiplied by a fixed 4 x
+4 matrix of integers (in a particular Galois Field). We used lookup tables mul2 and mul3 here.
+
+- addRoundkey: XOR the state with a 128-bit round key derived from the original key K by a recursive
+process.
+
+#### Decryption
+Each round of the decryption algorithm consists of four steps:
+
+- invSubBytes: for each byte in the array, use its value as an index into a fixed 256-element lookup table, which is Sbox reversed, and replace its value in the state by the byte value stored at that location in the table. 
+
+- invShiftRows: Let Ri denote the ith row in state. Shift R0 in the state right 0 bytes (i.e., no change); shift
+R1 right 1 byte; shift R2 right 2 bytes; shift R3 right 3 bytes. These are circular shifts. They do not affect
+the individual byte values themselves.
+
+- invMixColumns: for each column of the state, replace the column by its value multiplied by a fixed 4 x
+4 matrix of integers (in a particular Galois Field). We used lookup tables mul9, mul11, mul13 and mul14 here.
+
+- addRoundkey: XOR the state with a 128-bit round key derived from the original key K by a recursive
+process.
+
+
 
 ### Variables:
 - **K** - the cipher key given in args.
