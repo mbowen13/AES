@@ -1,0 +1,39 @@
+Directory structure
+
+src/
+	AES.java
+	encrypt/
+		128/
+			KEYFILE
+			TESTFILE
+			OUTFILENAME
+		256/
+			KEYFILE
+			TESTFILE
+			OUTFILENAME
+	decrypt
+		128/
+			KEYFILE
+			TESTFILE
+			OUTFILENAME
+		256/
+			KEYFILE
+			TESTFILE
+			OUTFILENAME
+
+1. Run this to compile (--add-modules flag if it complains about module package without the flag)
+javac --add-modules java.xml.bind AES.java
+
+
+2. Pick one 
+a. encrypt 128
+java --add-modules java.xml.bind AES --keysize 128 --keyfile encrypt/128/KEYFILE --inputfile encrypt/128/INPUTFILE --outputfile encrypt/128/OUTFILENAME --mode ENCRYPT
+
+b. encrypt 256
+java --add-modules java.xml.bind AES --keysize 256 --keyfile encrypt/256/KEYFILE --inputfile encrypt/256/INPUTFILE --outputfile encrypt/256/OUTFILENAME --mode ENCRYPT
+
+c. decrypt 128
+java --add-modules java.xml.bind AES --keysize 128 --keyfile decrypt/128/KEYFILE --inputfile decrypt/128/INPUTFILE --outputfile decrypt/128/OUTFILENAME --mode DECRYPT
+
+d. decrypt 256
+java --add-modules java.xml.bind AES --keysize 256 --keyfile decrypt/256/KEYFILE --inputfile decrypt/256/INPUTFILE --outputfile decrypt/256/OUTFILENAME --mode DECRYPT

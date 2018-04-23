@@ -599,21 +599,22 @@ public class AES {
 			out.println("REMAINING BYTES ARE " + size);
 			// Padding here
 			// If there are still bytes left in the file to encrpypt/decrypt
-			// if (size > 0) { 
-			// 	if (size >= 16) { out.println("ERROR, SHOULDN'T GET HERE"); }
-			// 	byte[] tail = new byte[size];
-			// 	for (int i = 0; i < size; i++) {
-			// 		tail[i] = (byte) fileInStream.read();
-			// 	}
-			// 	aes = new AES(key, padInput(tail));
-			// 	if (mode.toLowerCase().equals("encrypt")) {
-			// 		result = aes.encrypt();
-			// 		writeOutput(fileOutStream);
-			// 	} else if (mode.toLowerCase().equals("decrypt")) {
-			// 		result = aes.decrypt();
-			// 		writeOutput(fileOutStream);
-			// 	}
-			// }
+			if (size > 0) { 
+				out.println("GOT INTO PADDING");
+				if (size >= 16) { out.println("ERROR, SHOULDN'T GET HERE"); }
+				byte[] tail = new byte[size];
+				for (int i = 0; i < size; i++) {
+					tail[i] = (byte) fileInStream.read();
+				}
+				aes = new AES(key, padInput(tail));
+				if (mode.toLowerCase().equals("encrypt")) {
+					result = aes.encrypt();
+					writeOutput(fileOutStream, result);
+				} else if (mode.toLowerCase().equals("decrypt")) {
+					result = aes.decrypt();
+					writeOutput(fileOutStream, result);
+				}
+			}
 		} catch (IOException ex) {
 			out.printf("IO Exception %s\n", ex);
 		}
