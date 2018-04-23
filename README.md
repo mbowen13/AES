@@ -40,8 +40,7 @@ State bytes independently.
 
 - **shiftRows()**: transformation in the Cipher that processes the State by cyclically shifting the last three rows of the State by different offsets.
 
-- **mixColumns()**: transformation operates on the State column-by-column, treating each column as a four-term polynomial as described in Sec. 4.3. The columns are considered as polynomials over GF(2^8) and multiplied modulo 
-x^4 + 1 with a fixed polynomial a(x). Multiplication tables are used here to prevent extra calculations.
+- **mixColumns()**: transformation operates on the State column-by-column, treating each column as a four-term polynomial. The columns are considered as polynomials over GF(2^8) and multiplied modulo    x^4 + 1 with a fixed polynomial a(x). Multiplication tables are used here to prevent extra calculations.
 
 - **inbSubBytes()**:
 - **invShiftRows()**:
@@ -75,6 +74,6 @@ XOR is the sum of 2 bits, modulo 2 addition.
 
 {01010111} ^ {10000011} = {11010100} (binary notation);
 
-### Multiplication
+#### Multiplication
 To improve efficiency, we used multiplication tables mul2, mul3, mul9, mul11, mul13, and mul14 for multiplying polynomials. This way we didn't need to do any extra calculations.
 
