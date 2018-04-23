@@ -617,23 +617,6 @@ public class AES {
 		} catch (IOException ex) {
 			out.printf("IO Exception %s\n", ex);
 		}
-
-		
-		// byte[] input = loadInput(inputfile);
-		// if (input.length % 16 != 0) {
-		// 	input = padInput(input);
-		// }
-		// Input length should be a multipleo of 16 bytes
-		
-
-		// AES aes = new AES(key, input);
-		// if (mode.toLowerCase().equals("encrypt")) {
-		// 	byte[][] result = aes.encrypt();
-		// 	writeOutput(outputfile, result);
-		// } else if (mode.toLowerCase().equals("decrypt")) {
-		// 	byte[][] result = aes.decrypt();
-		// 	writeOutput(outputfile, result);
-		// }
     }      
 }
 
