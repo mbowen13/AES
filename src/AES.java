@@ -508,12 +508,12 @@ public class AES {
         System.out.println(javax.xml.bind.DatatypeConverter.printHexBinary(input));
     }
     
-    // Zero Sum Padding. Pad with zero except the last byte which is equal to the length of the padding
+    // Zero length Padding. Pad with zero except the last byte which is equal to the length of the padding
  	// 123456789
  	// 123456789000006
  	private static byte[] padInput(byte[] input) {
  		out.println("Input before padding: " + Arrays.toString(input)); // debugging step
- 		byte[] res = new byte[16];
+ 		byte[] res = new byte[input.length + (16 - input.length % 16)];
  		for (int i = 0; i < input.length; i++) { 
  			res[i] = input[i]; 
  		}
@@ -522,7 +522,7 @@ public class AES {
  		}
  		res[15] = (byte) (16 - input.length);
  		out.println("Padded input is: " + Arrays.toString(res)); // debugging step
- 		return input;
+ 		return res;
  	}
 
 	private static byte[] loadInput(String filename) {
@@ -570,6 +570,9 @@ public class AES {
 		// out.printf("Mode is %s\n", mode);
 		byte[] key = loadInput(keyfile);
 		byte[] input = loadInput(inputfile);
+		if (input.length % 16 != 0) {
+			input = padInput(input);
+		}
 		AES aes = new AES(key, input);
 		if (mode.toLowerCase().equals("encrypt")) {
 			byte[][] result = aes.encrypt();
