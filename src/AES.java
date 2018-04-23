@@ -526,12 +526,11 @@ public class AES {
  	}
 
 	private static byte[] loadInput(String filename) {
-		byte[] key = new byte[16];
+		byte[] key = new byte[1]; // assign to dummy byte array
 		try {
 			FileInputStream file = new FileInputStream(filename);
 			int size = file.available();
-			// pad if not multiple of 16
-			key = new byte[size];
+			key = new byte[size]; // create new key array with correct size
 			for(int i = 0; i < size; i++) {
 				key[i] = (byte) file.read();
 			}
@@ -584,6 +583,7 @@ public class AES {
 			// Read 16 bytes at a time if you can
 			// https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html
 			while ((c = fileInStream.read(buffer)) != -1) {
+
 				aes = new AES(key, buffer);
 				if (mode.toLowerCase().equals("encrypt")) {
 					result = aes.encrypt();
@@ -592,11 +592,10 @@ public class AES {
 					result = aes.decrypt();
 					writeOutput(fileOutStream, result);
 				}
-				buffer = new byte[16];
 			}
 
 			int size = fileInStream.available();
-			out.println("REMAINING BYTES ARE " + size);
+			out.println("REMAINING NUMBER OF BYTES: " + size);
 			// Padding here
 			// If there are still bytes left in the file to encrpypt/decrypt
 			if (size > 0) { 
