@@ -561,13 +561,6 @@ public class AES {
 		String inputfile = args[5];
 		String outputfile = args[7];
 		String mode = args[9];
-		// debug output
-		out.printf("Keysize is %s\n", keysize);
-		out.printf("Keyfile is %s\n", keyfile);
-		out.printf("Input file is %s\n", inputfile);
-		out.printf("Output file is %s\n", outputfile);
-		out.printf("Mode is %s\n", mode);
-
 		// We assume that the key is 128 or 256 bits long
 		// TODO add error checking in loadInput function
 		byte[] key = loadInput(keyfile);
@@ -596,12 +589,9 @@ public class AES {
 			}
 
 			int size = fileInStream.available();
-			out.println("REMAINING NUMBER OF BYTES: " + size);
 			// Padding here
-			// If there are still bytes left in the file to encrpypt/decrypt
+			// Enter if there are still bytes left in the file to encrpypt/decrypt
 			if (size > 0) { 
-				out.println("GOT INTO PADDING");
-				if (size >= 16) { out.println("ERROR, SHOULDN'T GET HERE"); }
 				byte[] tail = new byte[size];
 				for (int i = 0; i < size; i++) {
 					tail[i] = (byte) fileInStream.read();
