@@ -205,11 +205,7 @@ public class AES {
         // printBinary(state);
         // printBinary(K);
     }
-    
-    // Transformation in the Cipher and Inverse Cipher in which a Round
-    // Key is added to the State using an XOR operation. The length of a
-    // Round Key equals the size of the State (i.e., for Nb = 4, the Round
-    // Key length equals 128 bits/16 bytes). 
+ 
     private static void addRoundKey(int round) {
         for (int c = 0; c < Nb; c++) {
             int w = schedule[4 * round + c];
@@ -327,14 +323,10 @@ public class AES {
         };
     }
     
-    // Function used in the Key Expansion routine that takes a four-byte
-    // word and performs a cyclic permutation. 
     private static int rotWord(int i) {
         return Integer.rotateLeft(i, 8);
     };
     
-    // Transformation in the Cipher that processes the State by cyclically
-    // shifting the last three rows of the State by different offsets. 
     private static void shiftRows() {
             byte[][] tmp = new byte[4][4];
             
@@ -369,10 +361,7 @@ public class AES {
                 }
             }
     };
-    
-    // Transformation in the Cipher that processes the State using a nonlinear
-    // byte substitution table (S-box) that operates on each of the
-    // State bytes independently. 
+     
     private static void subBytes() {
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
@@ -380,10 +369,7 @@ public class AES {
             }
         }
     };
-    
-    // Function used in the Key Expansion routine that takes a four-byte
-    // input word and applies an S-box to each of the four bytes to
-    // produce an output word. 
+
     private static int subWord(int i) {
         // bit shifts are used to manipulate each 8 bits in the
         // 32 bit word and then place them correctly back into the
@@ -478,7 +464,6 @@ public class AES {
 		return state;
     }
     
-    // debug
     private static void printBinary(int[] i) {
         for(int x : i) {
             byte[] bytes = ByteBuffer.allocate(4).putInt(x).array();
