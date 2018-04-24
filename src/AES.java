@@ -5,13 +5,13 @@ import static java.lang.System.*;
 import javax.xml.bind.DatatypeConverter;
 
 public class AES {
-	private static int keySize; // 128 or 256
-  	private static FileInputStream keyFile;
-  	private static FileInputStream inputFile;
+    private static int keySize; // 128 or 256
+      private static FileInputStream keyFile;
+      private static FileInputStream inputFile;
     private static FileInputStream outputFile;
     private static String mode; //encrypt or decrypt
 
-	private final static byte[] sbox = {
+    private final static byte[] sbox = {
             0x63, 0x7c, 0x77, 0x7b, (byte) 0xf2, 0x6b, 0x6f, (byte) 0xc5, 0x30, 0x01, 0x67, 0x2b, (byte) 0xfe, (byte) 0xd7, (byte) 0xab, 0x76,
             (byte) 0xca, (byte) 0x82, (byte) 0xc9, 0x7d, (byte) 0xfa, 0x59, 0x47, (byte) 0xf0, (byte) 0xad, (byte) 0xd4, (byte) 0xa2, (byte) 0xaf, (byte) 0x9c, (byte) 0xa4, 0x72, (byte) 0xc0,
             (byte) 0xb7, (byte) 0xfd, (byte) 0x93, 0x26, 0x36, 0x3f, (byte) 0xf7, (byte) 0xcc, 0x34, (byte) 0xa5, (byte) 0xe5, (byte) 0xf1, 0x71, (byte) 0xd8, 0x31, 0x15,
@@ -444,7 +444,7 @@ public class AES {
         addRoundKey(Nr);
         
         printBinary(state);
-		return(state);
+        return(state);
     }
     
     private byte[][] decrypt() {
@@ -461,7 +461,7 @@ public class AES {
         addRoundKey(0);
         
         printBinary(state);
-		return state;
+        return state;
     }
     
     private static void printBinary(int[] i) {
@@ -493,115 +493,115 @@ public class AES {
     }
     
     // Zero length Padding. Pad with zero except the last byte which is equal to the length of the padding
- 	// 123456789
- 	// 123456789000006
- 	private static byte[] padInput(byte[] input) {
- 		out.println("Input before padding: " + Arrays.toString(input)); // debugging step
- 		byte[] res = new byte[input.length + (16 - input.length % 16)];
- 		for (int i = 0; i < input.length; i++) { 
- 			res[i] = input[i]; 
- 		}
- 		for (int i = input.length; i < 15; i++) {
- 			res[i] = (byte) 0;
- 		}
- 		res[15] = (byte) (16 - input.length);
- 		out.println("Padded input is: " + Arrays.toString(res)); // debugging step
- 		return res;
- 	}
+     // 123456789
+     // 123456789000006
+     private static byte[] padInput(byte[] input) {
+         out.println("Input before padding: " + Arrays.toString(input)); // debugging step
+         byte[] res = new byte[input.length + (16 - input.length % 16)];
+         for (int i = 0; i < input.length; i++) { 
+             res[i] = input[i]; 
+         }
+         for (int i = input.length; i < 15; i++) {
+             res[i] = (byte) 0;
+         }
+         res[15] = (byte) (16 - input.length);
+         out.println("Padded input is: " + Arrays.toString(res)); // debugging step
+         return res;
+     }
 
-	private static byte[] loadKey(String filename, int keyBytes) throws Exception {
-		byte[] key = new byte[keyBytes]; // assign to dummy byte array
-		try {
-			FileInputStream file = new FileInputStream(filename);
-			int size = file.available();
-			if (size != keyBytes) {
-				throw new Exception("Keyfile does match with Keysize.");
-			}
-			for(int i = 0; i < size; i++) {
-				key[i] = (byte) file.read();
-			}
-		} catch (IOException ex) {
-			out.printf("IO Exception %s\n", ex);
-		}
-		return key;
-	}
+    private static byte[] loadKey(String filename, int keyBytes) throws Exception {
+        byte[] key = new byte[keyBytes]; // assign to dummy byte array
+        try {
+            FileInputStream file = new FileInputStream(filename);
+            int size = file.available();
+            if (size != keyBytes) {
+                throw new Exception("Keyfile does match with Keysize.");
+            }
+            for(int i = 0; i < size; i++) {
+                key[i] = (byte) file.read();
+            }
+        } catch (IOException ex) {
+            out.printf("IO Exception %s\n", ex);
+        }
+        return key;
+    }
 
-	private static void writeOutput(FileOutputStream fileStream, byte[][] result) {
-		try {
-			// FileOutputStream file = new FileOutputStream(filename);
-			int counter = 0;
-			for(int i = 0; i < result.length; i++) {
-				for(int j = 0; j < result.length; j++) {
-					fileStream.write(result[j][i]);
-				}
-			}
-		} catch (IOException ex) {
-			out.printf("IO Exception %s\n", ex);
-		}
-		
-	}
-	
-	public static void main(String[] args) throws IOException {
-		int keysize = Integer.parseInt(args[1]);
-		if (! (keysize == 128 || keysize == 256)) { 
-			out.println("Invalid Keysize.");
-			return;
-		}
-		String keyfile = args[3];
-		String inputfile = args[5];
-		String outputfile = args[7];
-		String mode = args[9];
-		byte[] key = new byte[16];
-		// We assume that the key is 128 or 256 bits long
-		try {
-			key = loadKey(keyfile, keysize / 8);
-		} catch (Exception ex) {
-			out.println("Keysize and length of Keyfile do not match up.");
-			return;
-		}
-		
+    private static void writeOutput(FileOutputStream fileStream, byte[][] result) {
+        try {
+            // FileOutputStream file = new FileOutputStream(filename);
+            int counter = 0;
+            for(int i = 0; i < result.length; i++) {
+                for(int j = 0; j < result.length; j++) {
+                    fileStream.write(result[j][i]);
+                }
+            }
+        } catch (IOException ex) {
+            out.printf("IO Exception %s\n", ex);
+        }
+        
+    }
+    
+    public static void main(String[] args) throws IOException {
+        int keysize = Integer.parseInt(args[1]);
+        if (! (keysize == 128 || keysize == 256)) { 
+            out.println("Invalid Keysize.");
+            return;
+        }
+        String keyfile = args[3];
+        String inputfile = args[5];
+        String outputfile = args[7];
+        String mode = args[9];
+        byte[] key = new byte[16];
+        // We assume that the key is 128 or 256 bits long
+        try {
+            key = loadKey(keyfile, keysize / 8);
+        } catch (Exception ex) {
+            out.println("Keysize and length of Keyfile do not match up.");
+            return;
+        }
+        
 
-		try {
-			FileInputStream fileInStream = new FileInputStream(inputfile);
-			FileOutputStream fileOutStream = new FileOutputStream(outputfile);
-			byte[] buffer = new byte[16];
-			int c = 0; 
-			AES aes;
-			byte[][] result;
-			
-			// Read 16 bytes at a time if you can
-			// https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html
-			while (fileInStream.available() >= 16) {
-				fileInStream.read(buffer);
-				aes = new AES(key, buffer);
-				if (mode.toLowerCase().equals("encrypt")) {
-					result = aes.encrypt();
-					writeOutput(fileOutStream, result);
-				} else if (mode.toLowerCase().equals("decrypt")) {
-					result = aes.decrypt();
-					writeOutput(fileOutStream, result);
-				}
-			}
+        try {
+            FileInputStream fileInStream = new FileInputStream(inputfile);
+            FileOutputStream fileOutStream = new FileOutputStream(outputfile);
+            byte[] buffer = new byte[16];
+            int c = 0; 
+            AES aes;
+            byte[][] result;
+            
+            // Read 16 bytes at a time if you can
+            // https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html
+            while (fileInStream.available() >= 16) {
+                fileInStream.read(buffer);
+                aes = new AES(key, buffer);
+                if (mode.toLowerCase().equals("encrypt")) {
+                    result = aes.encrypt();
+                    writeOutput(fileOutStream, result);
+                } else if (mode.toLowerCase().equals("decrypt")) {
+                    result = aes.decrypt();
+                    writeOutput(fileOutStream, result);
+                }
+            }
 
-			int size = fileInStream.available();
-			// Padding here
-			// Enter if there are still bytes left in the file to encrpypt/decrypt
-			if (size > 0) { 
-				byte[] tail = new byte[size];
-				for (int i = 0; i < size; i++) {
-					tail[i] = (byte) fileInStream.read();
-				}
-				aes = new AES(key, padInput(tail));
-				if (mode.toLowerCase().equals("encrypt")) {
-					result = aes.encrypt();
-					writeOutput(fileOutStream, result);
-				} else if (mode.toLowerCase().equals("decrypt")) {
-					result = aes.decrypt();
-					writeOutput(fileOutStream, result);
-				}
-			}
-		} catch (IOException ex) {
-			out.printf("IO Exception %s\n", ex);
-		}
+            int size = fileInStream.available();
+            // Padding here
+            // Enter if there are still bytes left in the file to encrpypt/decrypt
+            if (size > 0) { 
+                byte[] tail = new byte[size];
+                for (int i = 0; i < size; i++) {
+                    tail[i] = (byte) fileInStream.read();
+                }
+                aes = new AES(key, padInput(tail));
+                if (mode.toLowerCase().equals("encrypt")) {
+                    result = aes.encrypt();
+                    writeOutput(fileOutStream, result);
+                } else if (mode.toLowerCase().equals("decrypt")) {
+                    result = aes.decrypt();
+                    writeOutput(fileOutStream, result);
+                }
+            }
+        } catch (IOException ex) {
+            out.printf("IO Exception %s\n", ex);
+        }
     }      
 }
