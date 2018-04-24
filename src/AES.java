@@ -440,8 +440,7 @@ public class AES {
             }
             schedule[i] = schedule[i - Nk] ^ temp;
         }
-        
-        // printBinary(schedule);
+        // printBinary(schedule); // debugging step
     }
     
     private static byte[][] encrypt() {
@@ -533,7 +532,6 @@ public class AES {
 			if (size != keyBytes) {
 				throw new Exception("Keyfile does match with Keysize.");
 			}
-			// key = new byte[size]; // create new key array with correct size
 			for(int i = 0; i < size; i++) {
 				key[i] = (byte) file.read();
 			}
@@ -566,7 +564,6 @@ public class AES {
 		String mode = args[9];
 		byte[] key = new byte[16];
 		// We assume that the key is 128 or 256 bits long
-		// TODO add error checking in loadKey function
 		try {
 			key = loadKey(keyfile, keysize / 8);
 		} catch (Exception ex) {
@@ -585,7 +582,6 @@ public class AES {
 			
 			// Read 16 bytes at a time if you can
 			// https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html
-			// while ((c = fileInStream.read(buffer)) != -1) {
 			while (fileInStream.available() >= 16) {
 				fileInStream.read(buffer);
 				aes = new AES(key, buffer);
