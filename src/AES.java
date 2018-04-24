@@ -525,12 +525,15 @@ public class AES {
  		return res;
  	}
 
-	private static byte[] loadInput(String filename) {
-		byte[] key = new byte[1]; // assign to dummy byte array
+	private static byte[] loadKey(String filename, int keyBytes) throws Exception {
+		byte[] key = new byte[keyBytes]; // assign to dummy byte array
 		try {
 			FileInputStream file = new FileInputStream(filename);
 			int size = file.available();
-			key = new byte[size]; // create new key array with correct size
+			if (size != keyBytes) {
+				throw new Exception("Keyfile does match with Keysize.");
+			}
+			// key = new byte[size]; // create new key array with correct size
 			for(int i = 0; i < size; i++) {
 				key[i] = (byte) file.read();
 			}
@@ -556,14 +559,21 @@ public class AES {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String keysize = args[1];
+		int keysize = Integer.parseInt(args[1]);
 		String keyfile = args[3];
 		String inputfile = args[5];
 		String outputfile = args[7];
 		String mode = args[9];
+		byte[] key = new byte[16];
 		// We assume that the key is 128 or 256 bits long
-		// TODO add error checking in loadInput function
-		byte[] key = loadInput(keyfile);
+		// TODO add error checking in loadKey function
+		try {
+			key = loadKey(keyfile, keysize / 8);
+		} catch (Exception ex) {
+			out.println("Keysize and length of Keyfile do not match up.");
+			return;
+		}
+		
 
 		try {
 			FileInputStream fileInStream = new FileInputStream(inputfile);

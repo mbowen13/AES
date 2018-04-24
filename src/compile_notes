@@ -25,39 +25,57 @@ javac --add-modules java.xml.bind AES.java
 
 
 2. Pick one 
-a. encrypt 128
+1. Encrypt 128
 java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/encrypt/128/INPUTFILE --outputfile testfiles/encrypt/128/OUTFILENAME --mode ENCRYPT
 
-b. encrypt 256
+2. Encrypt 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/encrypt/256/INPUTFILE --outputfile testfiles/encrypt/256/OUTFILENAME --mode ENCRYPT
 
-c. decrypt 128
+3. decrypt 128
 java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/encrypt/128/OUTFILENAME --outputfile testfiles/decrypt/128/OUTFILENAME --mode DECRYPT
 
-d. decrypt 256
+4. decrypt 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/encrypt/256/OUTFILENAME --outputfile testfiles/decrypt/256/OUTFILENAME --mode DECRYPT
 
 ******************************* MORE TEST CASES - LARGER FILES ********************************
-Encrypt larger file 128
+
+5. Encrypt larger file 128
 java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/big/encrypt_big/128/INPUTFILE --outputfile testfiles/big/encrypt_big/128/OUTFILENAME --mode ENCRYPT
 
-Decrypt larger file 128
+6. Decrypt larger file 128
 java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/big/encrypt_big/128/OUTFILENAME --outputfile testfiles/big/decrypt_big/128/OUTFILENAME --mode DECRYPT
 
-Encrypt larger file 256
+7. Encrypt larger file 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/big/encrypt_big/256/INPUTFILE --outputfile testfiles/big/encrypt_big/256/OUTFILENAME --mode ENCRYPT
 
-Decrypt larger file 256
+8. Decrypt larger file 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/big/encrypt_big/256/OUTFILENAME --outputfile testfiles/big/decrypt_big/256/OUTFILENAME --mode DECRYPT
+
 ******************************* MORE TEST CASES - SMALLER FILES ********************************
-Encrypt smaller file 128
+
+9. Encrypt smaller file 128
 java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/small/encrypt_small/128/INPUTFILE --outputfile testfiles/small/encrypt_small/128/OUTFILENAME --mode ENCRYPT
 
-Decrypt smaller file 128
+10. Decrypt smaller file 128
 java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/small/encrypt_small/128/OUTFILENAME --outputfile testfiles/small/decrypt_small/128/OUTFILENAME --mode DECRYPT
 
-Encrypt smaller file 256
+11. Encrypt smaller file 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/small/encrypt_small/256/INPUTFILE --outputfile testfiles/small/encrypt_small/256/OUTFILENAME --mode ENCRYPT
 
-Decrypt smaller file 256
+12. Decrypt smaller file 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/small/encrypt_small/256/OUTFILENAME --outputfile testfiles/small/decrypt_small/256/OUTFILENAME --mode DECRYPT
+
+******************************* TEST CASES - KEYFILE/KEYSIZE ERRORS ********************************
+THESE SHOUDL ALL RETURN ERRORS
+
+13. Encrypt 11 byte keyfile with 128 keysize
+java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/ERROR_128KEYFILE --inputfile testfiles/encrypt/128/INPUTFILE --outputfile testfiles/encrypt/128/OUTFILENAME --mode ENCRYPT
+
+14. Decrypt 11 byte keyfile with 128 keysize
+java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/ERROR_128KEYFILE --inputfile testfiles/encrypt/256/INPUTFILE --outputfile testfiles/encrypt/256/OUTFILENAME --mode ENCRYPT
+
+15. Encrypt 16 byte keyfile with 256 keysize
+java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/128KEYFILE --inputfile testfiles/encrypt/128/INPUTFILE --outputfile testfiles/encrypt/128/OUTFILENAME --mode ENCRYPT
+
+16. Decrypt 16 byte keyfile with 256 keysize
+java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/128KEYFILE --inputfile testfiles/encrypt/128/OUTFILENAME --outputfile testfiles/decrypt/128/OUTFILENAME --mode DECRYPT
