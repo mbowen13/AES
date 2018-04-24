@@ -426,6 +426,7 @@ public class AES {
             }
             schedule[i] = schedule[i - Nk] ^ temp;
         }
+        // printBinary(schedule); // debugging step
     }
     
     private static byte[][] encrypt() {
@@ -508,13 +509,14 @@ public class AES {
  		return res;
  	}
 
-	private static byte[] loadInput(String filename) {
-		byte[] key = new byte[16];
+	private static byte[] loadKey(String filename, int keyBytes) throws Exception {
+		byte[] key = new byte[keyBytes]; // assign to dummy byte array
 		try {
 			FileInputStream file = new FileInputStream(filename);
 			int size = file.available();
-			// pad if not multiple of 16
-			key = new byte[size];
+			if (size != keyBytes) {
+				throw new Exception("Keyfile does match with Keysize.");
+			}
 			for(int i = 0; i < size; i++) {
 				key[i] = (byte) file.read();
 			}
@@ -524,13 +526,13 @@ public class AES {
 		return key;
 	}
 
-	private static void writeOutput(String filename, byte[][] result) {
+	private static void writeOutput(FileOutputStream fileStream, byte[][] result) {
 		try {
-			FileOutputStream file = new FileOutputStream(filename);
+			// FileOutputStream file = new FileOutputStream(filename);
 			int counter = 0;
 			for(int i = 0; i < result.length; i++) {
 				for(int j = 0; j < result.length; j++) {
-					file.write(result[j][i]);
+					fileStream.write(result[j][i]);
 				}
 			}
 		} catch (IOException ex) {
@@ -540,31 +542,66 @@ public class AES {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String keysize = args[1];
+		int keysize = Integer.parseInt(args[1]);
+		if (! (keysize == 128 || keysize == 256)) { 
+			out.println("Invalid Keysize.");
+			return;
+		}
 		String keyfile = args[3];
 		String inputfile = args[5];
 		String outputfile = args[7];
 		String mode = args[9];
-		// debug output
-		// out.printf("Keysize is %s\n", keysize);
-		// out.printf("Keyfile is %s\n", keyfile);
-		// out.printf("Input file is %s\n", inputfile);
-		// out.printf("Output file is %s\n", outputfile);
-		// out.printf("Mode is %s\n", mode);
-		byte[] key = loadInput(keyfile);
-		byte[] input = loadInput(inputfile);
-		if (input.length % 16 != 0) {
-			input = padInput(input);
+		byte[] key = new byte[16];
+		// We assume that the key is 128 or 256 bits long
+		try {
+			key = loadKey(keyfile, keysize / 8);
+		} catch (Exception ex) {
+			out.println("Keysize and length of Keyfile do not match up.");
+			return;
 		}
-		AES aes = new AES(key, input);
-		if (mode.toLowerCase().equals("encrypt")) {
-			byte[][] result = aes.encrypt();
-			writeOutput(outputfile, result);
-		} else if (mode.toLowerCase().equals("decrypt")) {
-			byte[][] result = aes.decrypt();
-			writeOutput(outputfile, result);
+		
+
+		try {
+			FileInputStream fileInStream = new FileInputStream(inputfile);
+			FileOutputStream fileOutStream = new FileOutputStream(outputfile);
+			byte[] buffer = new byte[16];
+			int c = 0; 
+			AES aes;
+			byte[][] result;
+			
+			// Read 16 bytes at a time if you can
+			// https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html
+			while (fileInStream.available() >= 16) {
+				fileInStream.read(buffer);
+				aes = new AES(key, buffer);
+				if (mode.toLowerCase().equals("encrypt")) {
+					result = aes.encrypt();
+					writeOutput(fileOutStream, result);
+				} else if (mode.toLowerCase().equals("decrypt")) {
+					result = aes.decrypt();
+					writeOutput(fileOutStream, result);
+				}
+			}
+
+			int size = fileInStream.available();
+			// Padding here
+			// Enter if there are still bytes left in the file to encrpypt/decrypt
+			if (size > 0) { 
+				byte[] tail = new byte[size];
+				for (int i = 0; i < size; i++) {
+					tail[i] = (byte) fileInStream.read();
+				}
+				aes = new AES(key, padInput(tail));
+				if (mode.toLowerCase().equals("encrypt")) {
+					result = aes.encrypt();
+					writeOutput(fileOutStream, result);
+				} else if (mode.toLowerCase().equals("decrypt")) {
+					result = aes.decrypt();
+					writeOutput(fileOutStream, result);
+				}
+			}
+		} catch (IOException ex) {
+			out.printf("IO Exception %s\n", ex);
 		}
     }      
 }
-
-
