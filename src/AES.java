@@ -558,6 +558,10 @@ public class AES {
 	
 	public static void main(String[] args) throws IOException {
 		int keysize = Integer.parseInt(args[1]);
+		if (! (keysize == 128 || keysize == 256)) { 
+			out.println("Invalid Keysize.");
+			return;
+		}
 		String keyfile = args[3];
 		String inputfile = args[5];
 		String outputfile = args[7];
