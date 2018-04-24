@@ -582,8 +582,9 @@ public class AES {
 			
 			// Read 16 bytes at a time if you can
 			// https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html
-			while ((c = fileInStream.read(buffer)) != -1) {
-
+			// while ((c = fileInStream.read(buffer)) != -1) {
+			while (fileInStream.available() >= 16) {
+				fileInStream.read(buffer);
 				aes = new AES(key, buffer);
 				if (mode.toLowerCase().equals("encrypt")) {
 					result = aes.encrypt();
@@ -619,5 +620,3 @@ public class AES {
 		}
     }      
 }
-
-
