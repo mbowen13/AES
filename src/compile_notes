@@ -14,12 +14,11 @@ src/
 	decrypt
 		128/
 			KEYFILE
-			TESTFILE
 			OUTFILENAME
 		256/
 			KEYFILE
-			TESTFILE
 			OUTFILENAME
+Decrypt doesn't need INPUTFILE because it can take in encrypt OUTFILENAME as the input file.
 
 1. Run this to compile (--add-modules flag if it complains about module package without the flag)
 javac --add-modules java.xml.bind AES.java
@@ -33,10 +32,10 @@ b. encrypt 256
 java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/encrypt/256/INPUTFILE --outputfile testfiles/encrypt/256/OUTFILENAME --mode ENCRYPT
 
 c. decrypt 128
-java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/decrypt/128/INPUTFILE --outputfile testfiles/decrypt/128/OUTFILENAME --mode DECRYPT
+java --add-modules java.xml.bind AES --keysize 128 --keyfile testfiles/128KEYFILE --inputfile testfiles/encrypt/128/OUTFILENAME --outputfile testfiles/decrypt/128/OUTFILENAME --mode DECRYPT
 
 d. decrypt 256
-java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/decrypt/256/INPUTFILE --outputfile testfiles/decrypt/256/OUTFILENAME --mode DECRYPT
+java --add-modules java.xml.bind AES --keysize 256 --keyfile testfiles/256KEYFILE --inputfile testfiles/encrypt/256/OUTFILENAME --outputfile testfiles/decrypt/256/OUTFILENAME --mode DECRYPT
 
 ******************************* MORE TEST CASES - LARGER FILES ********************************
 Encrypt larger file 128
